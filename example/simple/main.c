@@ -6,6 +6,7 @@
 #include "math/vec.h"
 #include "nhgui_glfw.h"
 #include "nhgui.h"
+#include "nhgui_list.h"
 
 
 int main(int args, char *argv[])

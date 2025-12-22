@@ -6,6 +6,7 @@
 #include "math/vec.h"
 #include "nhgui_glfw.h"
 #include "nhgui.h"
+#include "nhgui_list.h"
 
 
 #define ADD_BUFFER_SIZE 50
