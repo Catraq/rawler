@@ -88,15 +88,8 @@ int main(int args, char *argv[])
 	struct nhgui_object_font font;
 
 	{
-		struct nhgui_object_font_freetype font_freetype;
-		result = nhgui_object_font_freetype_initialize(&font_freetype);
-		if(result < 0){
-			fprintf(stderr, "nhgui_object_font_freetype_initilaize() failed. \n");
-			exit(EXIT_FAILURE);
-		}
 		
 		result = nhgui_object_font_freetype_characters_initialize(
-				&font_freetype,
 				&context,
 				&font_render_attribute ,
 				&font, 
@@ -109,8 +102,6 @@ int main(int args, char *argv[])
 			exit(EXIT_FAILURE);
 		}
 	
-
-		nhgui_object_font_freetype_deinitialize(&font_freetype);
 	}
 
 	
@@ -131,7 +122,7 @@ int main(int args, char *argv[])
 		"I agree that the terms of service is good. ",
 		"I hope this gui will be useful", 
 		"I accept that I lack imagination",
-		"pI may not have hope and dreams."
+		"I may not have hope and dreams."
 	};
 
 	struct nhgui_window nhwindow = {};

@@ -1797,36 +1797,26 @@ nhgui_object_input_field_float(
 }
 
 int 
-nhgui_object_font_freetype_initialize(struct nhgui_object_font_freetype *freetype)
-{
-	if(FT_Init_FreeType(&freetype->ft) != 0)
-	{
-		fprintf(stderr, "FT_Init_Freetype() failed. \n");
-		return -1;	
-	}
-
-	return 0;
-}
-
-void 
-nhgui_object_font_freetype_deinitialize(struct nhgui_object_font_freetype *freetype)
-{
-	FT_Done_FreeType(freetype->ft);
-}
-
-int 
 nhgui_object_font_freetype_characters_initialize(
-		struct nhgui_object_font_freetype *freetype,
 		const struct nhgui_context *context,
 		const struct nhgui_render_attribute *attribute,
 	       	struct nhgui_object_font *font,
 	       	const char *filename
 )
 {
+	FT_Library ft;
+	if(FT_Init_FreeType(&ft) != 0)
+	{
+		fprintf(stderr, "FT_Init_Freetype() failed. \n");
+		return -1;	
+	}
+
+
 	FT_Face face;
-	if(FT_New_Face(freetype->ft, filename, 0, &face))
+	if(FT_New_Face(ft, filename, 0, &face))
 	{
 		fprintf(stderr, "FT_New_Face() failed. \n");
+		FT_Done_FreeType(ft);
 		return -1;
 	}
 	
@@ -1847,6 +1837,7 @@ nhgui_object_font_freetype_characters_initialize(
 		if(FT_Load_Char(face, i, FT_LOAD_RENDER)){
 			fprintf(stderr, "Could not load characters %c from font file. \n", i);
 			glDeleteTextures(128, texture);
+			FT_Done_FreeType(ft);
 			return -1;	
 		}
 
@@ -1879,6 +1870,8 @@ nhgui_object_font_freetype_characters_initialize(
 			text,
 			sizeof(text)
 	);
+
+	FT_Done_FreeType(ft);
 
 	return 0;	
 }

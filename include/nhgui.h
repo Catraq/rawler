@@ -167,11 +167,6 @@ struct nhgui_icon_blank_instance
 
 
 
-struct nhgui_object_font_freetype
-{
-	FT_Library ft;
-};
-
 struct nhgui_object_font_character
 {
 	/* Opengl texture object */
@@ -595,20 +590,10 @@ nhgui_icon_menu(
 #endif 
 
 /* 
- * Initialize freetype library used for generating bitmaps from font files 
- */
-int 
-nhgui_object_font_freetype_initialize(struct nhgui_object_font_freetype *freetype);
-
-void 
-nhgui_object_font_freetype_deinitialize(struct nhgui_object_font_freetype *freetype);
-
-/* 
  * Load ANSI characters from filename into font with height described in attribute.
  */
 int 
 nhgui_object_font_freetype_characters_initialize(
-		struct nhgui_object_font_freetype *freetype,
 		const struct nhgui_context *context,
 		const struct nhgui_render_attribute *attribute,
 	       	struct nhgui_object_font *font, 
