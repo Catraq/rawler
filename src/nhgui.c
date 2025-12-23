@@ -1,7 +1,5 @@
 #include "nhgui.h"
 
-#include "../config.h"
-
 #define TEXT(x) #x
 
 
@@ -63,7 +61,7 @@ int nhgui_context_initialize(
 		return -1;	
 	}
 
-#if NHGUI_OBJECT_RADIO_BUTTON	
+
 	result = nhgui_object_radio_button_initialize(&context->radio_button);
 	if(result < 0){
 
@@ -75,10 +73,9 @@ int nhgui_context_initialize(
 		fprintf(stderr, "nhgui_object_radio_button_initialize() failed. \n");
 		return -1;
 	}
-#endif 
 
 
-#if NHGUI_ICON_MENU
+
 	result = nhgui_icon_menu_initialize(&context->menu);
 	if(result < 0){
 
@@ -90,20 +87,14 @@ int nhgui_context_initialize(
 		fprintf(stderr, "nhgui_icon_menu_initialize() failed. \n");
 		goto failure;	
 	}
-#endif 
 
 
 	return 0;
 	
 	/* Clean up those instances that use a flag to determine initializion state */
 failure:
-#if NHGUI_ICON_MENU
 	nhgui_icon_menu_deinitialize(&context->menu);
-#endif 
-
-#if NHGUI_OBJECT_RADIO_BUTTON
 	nhgui_object_radio_button_deinitialize(&context->radio_button);
-#endif 
 
 	return -1;
 }
@@ -117,14 +108,8 @@ nhgui_context_deinitialize(
 	nhgui_surface_deinitialize(&context->surface);
 	nhgui_icon_blank_deinitialize(&context->blank);
 	nhgui_object_font_text_deinitialize(&context->font);
-
-#if NHGUI_OBJECT_RADIO_BUTTON
 	nhgui_object_radio_button_deinitialize(&context->radio_button);
-#endif 
-
-#if NHGUI_ICON_MENU
 	nhgui_icon_menu_deinitialize(&context->menu);
-#endif 
 }
 
 int
@@ -134,28 +119,21 @@ nhgui_common_uniform_locations_find(struct nhgui_common_uniform_locations *locat
 	GLint position_location = glGetUniformLocation(program, position_uniform_str);
 	if(position_location == -1)
 	{
-#if NHGUI_DEBUG
 		fprintf(stderr, "Could not find uniform location %s. \n", position_uniform_str);
-#endif 
 	}
 
 	const char *size_uniform_str = "size";
 	GLint size_location = glGetUniformLocation(program, size_uniform_str);
 	if(size_location == -1)
 	{
-#if NHGUI_DEBUG
 		fprintf(stderr, "Could not find uniform location %s. \n", size_uniform_str);
-#endif 
 	}
 
 	const char *dimension_uniform_str = "dimension";
 	GLint dimension_location = glGetUniformLocation(program, dimension_uniform_str);
 	if(dimension_location == -1)
 	{
-#if NHGUI_DEBUG
 		fprintf(stderr, "Could not find uniform location %s. \n", dimension_uniform_str);
-#endif 
-
 	}
 
 
@@ -163,9 +141,7 @@ nhgui_common_uniform_locations_find(struct nhgui_common_uniform_locations *locat
 	GLint color_location = glGetUniformLocation(program, color_uniform_str);
 	if(color_location == -1)
 	{
-#if NHUI_DEBUG
 		fprintf(stderr, "Could not find uniform location %s. \n", color_uniform_str);
-#endif 
 	}
 
 
@@ -267,53 +243,6 @@ nhgui_result_rewind_x_to(struct nhgui_result result, struct nhgui_result to)
 	result.x_mm = to.x_mm;
 	result.x_inc_next = 0;
 	return result;
-}
-
-GLuint nhgui_shader_vertex_create_from_file(
-		const char *vertex_source_filename,
-		const char *fragment_source_filename
-)
-{
-	uint8_t vertex_source[NGGUI_SHADER_FILE_MAX_SIZE];
-	uint8_t fragment_source[NGGUI_SHADER_FILE_MAX_SIZE];
-
-	uint32_t vertex_read = misc_file_read_buffer(vertex_source_filename, vertex_source, NGGUI_SHADER_FILE_MAX_SIZE);
-	if(vertex_read == 0){
-		fprintf(stderr, "Could not read file %s \n", vertex_source_filename);
-		return 0;
-	}
-
-	uint32_t fragment_read = misc_file_read_buffer(fragment_source_filename, fragment_source, NGGUI_SHADER_FILE_MAX_SIZE);
-	if(fragment_read == 0){
-		fprintf(stderr, "Could not read file %s \n", fragment_source_filename);
-		return 0;
-	}
-
-	const char *vertex_source_list[] = {
-		(const char *)vertex_source	
-	};	
-
-	int32_t vertex_source_length[] = {vertex_read};
-
-	const char *fragment_source_list[] = {
-		(const char *)fragment_source	
-	};	
-
-	int32_t fragment_source_length[] = {fragment_read};
-
-	GLuint program = nhgui_shader_vertex_create(
-			vertex_source_list, vertex_source_length, 1,
-			fragment_source_list, fragment_source_length, 1
-	);
-
-	if(program == 0)
-	{
-		fprintf(stderr, "Could not create shader program. \n");
-		return 0;	
-	
-	}
-	
-	return program;
 }
 
 GLuint nhgui_shader_vertex_create_from_memory(
@@ -699,7 +628,6 @@ nhgui_icon_blank_deinitialize(struct nhgui_icon_blank_instance *instance)
 }
 
 
-#if NHGUI_ICON_MENU
 struct nhgui_result
 nhgui_icon_menu(
 		struct nhgui_icon_menu *object,
@@ -815,7 +743,6 @@ nhgui_icon_menu_deinitialize(struct nhgui_icon_menu_instance *instance)
 	}
 }
 
-#endif 
 
 struct nhgui_result 
 nhgui_icon_text_cursor(
@@ -2004,7 +1931,6 @@ nhgui_object_font_text_area(
 
 
 
-#if NHGUI_OBJECT_RADIO_BUTTON
 
 struct nhgui_result
 nhgui_object_radio_button(
@@ -2161,7 +2087,6 @@ void nhgui_object_radio_button_deinitialize(struct nhgui_object_radio_button_ins
 		glDeleteProgram(instance->shader_program);
 	}
 }
-#endif 
 
 int32_t 
 nhgui_input_buffer(

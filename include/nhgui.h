@@ -13,7 +13,6 @@
 #include "misc/file.h"
 #include "math/vec.h"
 
-#include "../config.h"
 #include "nhgui_error.h"
 
 
@@ -137,7 +136,6 @@ struct nhgui_surface
  * of the object 
  */
 
-#if NHGUI_ICON_MENU
 
 struct nhgui_icon_menu_instance
 {
@@ -149,7 +147,6 @@ struct nhgui_icon_menu_instance
 	struct nhgui_common_uniform_locations locations;
 };
 
-#endif  
 
 struct nhgui_icon_text_cursor_instance 
 {
@@ -207,7 +204,6 @@ struct nhgui_object_font_text_instance
 	struct nhgui_common_uniform_locations locations;
 };
 
-#if NHGUI_OBJECT_RADIO_BUTTON 
 
 struct nhgui_object_radio_button_instance 
 {
@@ -221,21 +217,16 @@ struct nhgui_object_radio_button_instance
 	struct nhgui_common_uniform_locations locations;
 };
 
-#endif 
 
-#if NHGUI_ICON_MENU
 struct nhgui_icon_menu
 {
 	uint8_t clicked;
 };
-#endif 
 
-#if NHGUI_OBJECT_RADIO_BUTTON
 struct nhgui_object_radio_button
 {
 	uint8_t checked;
 };
-#endif 
 
 struct nhgui_icon_blank
 {
@@ -298,13 +289,10 @@ struct nhgui_context
 	struct nhgui_icon_blank_instance blank;
 
 	struct nhgui_object_font_text_instance font;
-#if NHGUI_OBJECT_RADIO_BUTTON
-	struct nhgui_object_radio_button_instance radio_button;
-#endif 
 
-#if NHGUI_ICON_MENU
+	struct nhgui_object_radio_button_instance radio_button;
+
 	struct nhgui_icon_menu_instance menu;
-#endif 
 
 	/* Screen width and height in mm. */
 	uint32_t screen_width_mm;
@@ -526,7 +514,6 @@ nhgui_icon_text_cursor(
 );
 
 
-#if NHGUI_ICON_MENU
 /* 
  * Draw a menu icon. Attribute height sets both width and 
  * height.
@@ -540,7 +527,6 @@ nhgui_icon_menu(
 		const struct nhgui_result result
 );
 
-#endif 
 
 /* 
  * Load ANSI characters from filename into font with height described in attribute.
@@ -632,7 +618,6 @@ nhgui_object_font_text_area(
 );
 
 
-#if NHGUI_OBJECT_RADIO_BUTTON
 /* 
  * Attribute height describes both height and width of the radio button. 
  */
@@ -646,7 +631,6 @@ nhgui_object_radio_button(
 	       	const struct nhgui_result result
 );
 
-#endif 
 
 /* Internal functions */
 
@@ -680,7 +664,6 @@ void
 nhgui_object_font_text_deinitialize(struct nhgui_object_font_text_instance *instance);
 
 
-#if NHGUI_OBJECT_RADIO_BUTTON 
 
 int nhgui_object_radio_button_initialize(
 		struct nhgui_object_radio_button_instance *instance
@@ -691,10 +674,8 @@ void nhgui_object_radio_button_deinitialize(
 		struct nhgui_object_radio_button_instance *instance
 );
 
-#endif 
 
 
-#ifdef NHGUI_ICON_MENU
 int 
 nhgui_icon_menu_initialize(
 		struct nhgui_icon_menu_instance *instance
@@ -705,7 +686,6 @@ nhgui_icon_menu_deinitialize(
 		struct nhgui_icon_menu_instance *instance
 );
 
-#endif 
 
 
 
