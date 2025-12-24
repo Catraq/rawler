@@ -12,7 +12,7 @@ set(SOURCES
 	"${PROJECT_SOURCE_DIR}/src/rl_gui_error.c"
 )
 
-add_library(nhgui SHARED ${SOURCES})
+add_library(rl_gui SHARED ${SOURCES})
 
 find_package(GLEW REQUIRED)
 target_include_directories(nhgui PUBLIC ${GLEW_INCLUDE_DIRS})
