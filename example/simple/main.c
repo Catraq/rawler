@@ -4,8 +4,8 @@
 #include <string.h>
 
 #include "math/vec.h"
-#include "nhgui_glfw.h"
-#include "nhgui.h"
+#include "rl_gui_glfw.h"
+#include "rl_gui.h"
 
 
 int main(int args, char *argv[])
@@ -42,7 +42,7 @@ int main(int args, char *argv[])
 	res_y = mode->height;
 
 
-	glfwSetCharCallback(window, nhgui_glfw_char_callback);
+	glfwSetCharCallback(window, rl_gui_glfw_char_callback);
 
 	glfwMakeContextCurrent(window);
 	
@@ -70,26 +70,26 @@ int main(int args, char *argv[])
 	
 	int result = 0;
 	/* Create gui context */	
-	struct nhgui_context context;
-	result = nhgui_context_initialize(&context, (uint32_t)res_x, (uint32_t)res_y, (uint32_t)width_mm, (uint32_t)height_mm);
+	struct rl_gui_context context;
+	result = rl_gui_context_initialize(&context, (uint32_t)res_x, (uint32_t)res_y, (uint32_t)width_mm, (uint32_t)height_mm);
 	if(result < 0){
-		fprintf(stderr, "nhgui_context_initialize() failed. \n");
+		fprintf(stderr, "rl_gui_context_initialize() failed. \n");
 		exit(EXIT_FAILURE);
 	}
 
 
 	
-	struct nhgui_render_attribute font_render_attribute = {
+	struct rl_gui_render_attribute font_render_attribute = {
 		.height_mm = 10,
 	};
 
 
 	const char *font_filename = "../data/UbuntuMono-R.ttf";
-	struct nhgui_object_font font;
+	struct rl_gui_object_font font;
 
 	{
 		
-		result = nhgui_object_font_freetype_characters_initialize(
+		result = rl_gui_object_font_freetype_characters_initialize(
 				&context,
 				&font_render_attribute ,
 				&font, 
@@ -98,14 +98,14 @@ int main(int args, char *argv[])
 
 		if(result < 0)
 		{
-			fprintf(stderr, "nhgui_object_font_freetype_characters_initialize() failed. \n");
+			fprintf(stderr, "rl_gui_object_font_freetype_characters_initialize() failed. \n");
 			exit(EXIT_FAILURE);
 		}
 	
 	}
 
 	
-	struct nhgui_render_attribute radio_render_attribute = {
+	struct rl_gui_render_attribute radio_render_attribute = {
 		.height_mm = 3,
 		.width_mm = 40, 
 	};
@@ -113,7 +113,7 @@ int main(int args, char *argv[])
 
 
 	const uint32_t radio_button_row = 5;
-	struct 	nhgui_object_radio_button radio_button_object[radio_button_row];
+	struct 	rl_gui_object_radio_button radio_button_object[radio_button_row];
 
 
 
@@ -126,26 +126,26 @@ int main(int args, char *argv[])
 	};
 
 
-	struct nhgui_render_attribute menu_render_attribute = {
+	struct rl_gui_render_attribute menu_render_attribute = {
 		.height_mm = 10,
 	};
-	struct nhgui_icon_menu menu_object = {};
+	struct rl_gui_icon_menu menu_object = {};
 
 	/* Search input field */
 	const uint32_t input_buffer_size = 32;
 	uint32_t input_buffer_length = 0;
 	char input_buffer[input_buffer_size];
-	struct nhgui_object_input_field input_field = {};
+	struct rl_gui_object_input_field input_field = {};
 
 	/* Add input field */
 	const uint32_t add_buffer_size = 32;
 	uint32_t add_buffer_length = 0;
 	char add_buffer[input_buffer_size];
-	struct nhgui_object_input_field add_field = {};
+	struct rl_gui_object_input_field add_field = {};
 
-	struct nhgui_object_text_list list_object = {
-		.text_color = (struct nhgui_vec3){.x = 1, .y = 0, .z = 0},
-		.selected_text_color = (struct nhgui_vec3){.x = 0, .y = 1, .z = 0},
+	struct rl_gui_object_text_list list_object = {
+		.text_color = (struct rl_gui_vec3){.x = 1, .y = 0, .z = 0},
+		.selected_text_color = (struct rl_gui_vec3){.x = 0, .y = 1, .z = 0},
 		.char_scroll_per_sec = 1.0,
 
 	};
@@ -158,12 +158,12 @@ int main(int args, char *argv[])
 		strlen(radio_button_text[4]), 	
 	};
 
-	struct nhgui_glfw_frame frame = nhgui_frame_create(window);
+	struct rl_gui_glfw_frame frame = rl_gui_frame_create(window);
 
 	while(!glfwWindowShouldClose(window))
 	{
 
-		struct nhgui_input input = nhgui_glfw_frame_begin(&frame, window);
+		struct rl_gui_input input = rl_gui_glfw_frame_begin(&frame, window);
 
 		glDisable(GL_SCISSOR_TEST);
 		glClearColor(0.1, 0.5, 0.5, 0);
@@ -177,13 +177,13 @@ int main(int args, char *argv[])
 		
 		glEnable(GL_SCISSOR_TEST);
 
-		struct nhgui_result result = {
+		struct rl_gui_result result = {
 			.y_mm = context.screen_height_mm * (float)input.height_pixel/(float)context.screen_resolution_y,
 		};
 
 
 		/* Menu button */
-		struct nhgui_result m_render_result = nhgui_icon_menu(
+		struct rl_gui_result m_render_result = rl_gui_icon_menu(
 				&menu_object,
 				&context,
 			       	&menu_render_attribute,
@@ -191,12 +191,12 @@ int main(int args, char *argv[])
 			       	result
 		);
 
-		result = nhgui_result_dec_y(m_render_result);
+		result = rl_gui_result_dec_y(m_render_result);
 
 		/* Menu button text */
 		const char menu_text[] = "menu";
-		result = nhgui_result_margin(result, 0, 1);
-		struct nhgui_result c_render_result = nhgui_object_font_text_result_centered_by_previous_x(
+		result = rl_gui_result_margin(result, 0, 1);
+		struct rl_gui_result c_render_result = rl_gui_object_font_text_result_centered_by_previous_x(
 				result, 
 				&context, 
 				&font, 
@@ -205,7 +205,7 @@ int main(int args, char *argv[])
 				sizeof(menu_text)
 		);
 
-		result = nhgui_object_font_text(
+		result = rl_gui_object_font_text(
 				&context, 
 				&font, 
 				menu_text,
@@ -214,8 +214,8 @@ int main(int args, char *argv[])
 				&input, 
 				c_render_result
 		);
-		result = nhgui_result_dec_y(result);
-		result = nhgui_result_margin(result, 0, 2);
+		result = rl_gui_result_dec_y(result);
+		result = rl_gui_result_margin(result, 0, 2);
 
 	
 		if(menu_object.clicked)
@@ -223,10 +223,10 @@ int main(int args, char *argv[])
 			for(uint32_t j = 0; j < radio_button_row; j++)
 			{
 
-				result = nhgui_result_margin(result, 0, 0);
+				result = rl_gui_result_margin(result, 0, 0);
 
 				uint32_t index = j;
-				result = nhgui_object_radio_button(
+				result = rl_gui_object_radio_button(
 						&radio_button_object[index], 
 						&context,
 						&radio_render_attribute, 
@@ -234,10 +234,10 @@ int main(int args, char *argv[])
 					       	result
 				);
 				
-				result = nhgui_result_inc_x(result);
-				result = nhgui_result_margin(result, 2, 0);
+				result = rl_gui_result_inc_x(result);
+				result = rl_gui_result_margin(result, 2, 0);
 
-				result = nhgui_object_font_text(
+				result = rl_gui_object_font_text(
 						&context, 
 						&font, 
 						radio_button_text[j], 
@@ -248,19 +248,19 @@ int main(int args, char *argv[])
 				);
 
 				
-				result = nhgui_result_margin(result, 0, 1);
+				result = rl_gui_result_margin(result, 0, 1);
 
-				result = nhgui_result_rewind_x_to(result, c_render_result);
-				result = nhgui_result_dec_y(result);
+				result = rl_gui_result_rewind_x_to(result, c_render_result);
+				result = rl_gui_result_dec_y(result);
 
 			}
 					
 		}
 		
-		result = nhgui_result_dec_y(result);
-		result = nhgui_result_rewind_x_to(result, m_render_result);
+		result = rl_gui_result_dec_y(result);
+		result = rl_gui_result_rewind_x_to(result, m_render_result);
 
-		struct nhgui_result res = nhgui_object_input_field(
+		struct rl_gui_result res = rl_gui_object_input_field(
 				&input_field, 
 				&context,
 				&font, 
@@ -273,11 +273,11 @@ int main(int args, char *argv[])
 		
 		);
 
-		res = nhgui_result_dec_y(res);	
-		res = nhgui_result_rewind_x_to(res, m_render_result); 
-		res = nhgui_result_margin(res, 0, 1);	
+		res = rl_gui_result_dec_y(res);	
+		res = rl_gui_result_rewind_x_to(res, m_render_result); 
+		res = rl_gui_result_margin(res, 0, 1);	
 			
-		res = nhgui_object_input_field(
+		res = rl_gui_object_input_field(
 				&add_field, 
 				&context,
 				&font, 
@@ -289,11 +289,11 @@ int main(int args, char *argv[])
 				add_buffer_size
 		);
 
-		res = nhgui_result_dec_y(res);	
-		res = nhgui_result_rewind_x_to(res, m_render_result); 
+		res = rl_gui_result_dec_y(res);	
+		res = rl_gui_result_rewind_x_to(res, m_render_result); 
 
 
-		res = nhgui_object_text_list(
+		res = rl_gui_object_text_list(
 				&list_object,
 				&context, 
 				radio_button_text,
@@ -308,12 +308,12 @@ int main(int args, char *argv[])
 
 	
 
-		nhgui_glfw_frame_end(&frame, &input);	
+		rl_gui_glfw_frame_end(&frame, &input);	
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 	
-	nhgui_context_deinitialize(&context);
+	rl_gui_context_deinitialize(&context);
 
 	glfwDestroyWindow(window);
     	glfwTerminate();

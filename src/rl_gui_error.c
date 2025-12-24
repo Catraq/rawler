@@ -1,6 +1,6 @@
-#include "nhgui_error.h"
+#include "rl_gui_error.h"
 
-void nhgui_gl_error(const char *msg)
+void rl_gui_gl_error(const char *msg)
 {
 	GLenum error_code = GL_NO_ERROR;
 	while((error_code = glGetError()) != GL_NO_ERROR)

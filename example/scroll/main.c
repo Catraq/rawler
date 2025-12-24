@@ -4,8 +4,8 @@
 #include <string.h>
 
 #include "math/vec.h"
-#include "nhgui_glfw.h"
-#include "nhgui.h"
+#include "rl_gui_glfw.h"
+#include "rl_gui.h"
 
 
 int main(int args, char *argv[])
@@ -42,7 +42,7 @@ int main(int args, char *argv[])
 	res_y = mode->height;
 
 
-	glfwSetCharCallback(window, nhgui_glfw_char_callback);
+	glfwSetCharCallback(window, rl_gui_glfw_char_callback);
 
 	glfwMakeContextCurrent(window);
 	
@@ -70,26 +70,26 @@ int main(int args, char *argv[])
 	
 	int result = 0;
 	/* Create gui context */	
-	struct nhgui_context context;
-	result = nhgui_context_initialize(&context, (uint32_t)res_x, (uint32_t)res_y, (uint32_t)width_mm, (uint32_t)height_mm);
+	struct rl_gui_context context;
+	result = rl_gui_context_initialize(&context, (uint32_t)res_x, (uint32_t)res_y, (uint32_t)width_mm, (uint32_t)height_mm);
 	if(result < 0){
-		fprintf(stderr, "nhgui_context_initialize() failed. \n");
+		fprintf(stderr, "rl_gui_context_initialize() failed. \n");
 		exit(EXIT_FAILURE);
 	}
 
 
 	
-	struct nhgui_render_attribute font_render_attribute = {
+	struct rl_gui_render_attribute font_render_attribute = {
 		.height_mm = 10,
 	};
 
 
 	const char *font_filename = "../data/UbuntuMono-R.ttf";
-	struct nhgui_object_font font;
+	struct rl_gui_object_font font;
 
 	{
 		
-		result = nhgui_object_font_freetype_characters_initialize(
+		result = rl_gui_object_font_freetype_characters_initialize(
 				&context,
 				&font_render_attribute ,
 				&font, 
@@ -98,14 +98,14 @@ int main(int args, char *argv[])
 
 		if(result < 0)
 		{
-			fprintf(stderr, "nhgui_object_font_freetype_characters_initialize() failed. \n");
+			fprintf(stderr, "rl_gui_object_font_freetype_characters_initialize() failed. \n");
 			exit(EXIT_FAILURE);
 		}
 	
 	}
 
 	
-	struct nhgui_render_attribute list_render_attribute = {
+	struct rl_gui_render_attribute list_render_attribute = {
 		.height_mm = 3,
 		.width_mm = 40, 
 	};
@@ -127,9 +127,9 @@ int main(int args, char *argv[])
 		"up with a gui"
 	};
 
-	struct nhgui_object_text_list list_object = {
-		.text_color = (struct nhgui_vec3){.x = 1, .y = 0, .z = 0},
-		.selected_text_color = (struct nhgui_vec3){.x = 0, .y = 1, .z = 0},
+	struct rl_gui_object_text_list list_object = {
+		.text_color = (struct rl_gui_vec3){.x = 1, .y = 0, .z = 0},
+		.selected_text_color = (struct rl_gui_vec3){.x = 0, .y = 1, .z = 0},
 		.char_scroll_per_sec = 1.0,
 
 	};
@@ -151,12 +151,12 @@ int main(int args, char *argv[])
 		strlen(list_entries[13]), 	
 	};
 	
-	struct nhgui_glfw_frame frame = nhgui_frame_create(window);
+	struct rl_gui_glfw_frame frame = rl_gui_frame_create(window);
 
 	while(!glfwWindowShouldClose(window))
 	{
 
-		struct nhgui_input input = nhgui_glfw_frame_begin(&frame, window);
+		struct rl_gui_input input = rl_gui_glfw_frame_begin(&frame, window);
 
 		glDisable(GL_SCISSOR_TEST);
 		glClearColor(0.1, 0.5, 0.5, 0);
@@ -171,13 +171,13 @@ int main(int args, char *argv[])
 		glEnable(GL_SCISSOR_TEST);
 		
 		/* Set the start location to draw too */
-		struct nhgui_result result = {
+		struct rl_gui_result result = {
 			.y_mm = context.screen_height_mm * (float)input.height_pixel/(float)context.screen_resolution_y,
 		};
 
 	
 
-		result = nhgui_object_text_list(
+		result = rl_gui_object_text_list(
 				&list_object,
 				&context, 
 				list_entries,
@@ -189,13 +189,13 @@ int main(int args, char *argv[])
 				result	
 		);
 
-		nhgui_glfw_frame_end(&frame, &input);	
+		rl_gui_glfw_frame_end(&frame, &input);	
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 	
-	nhgui_context_deinitialize(&context);
+	rl_gui_context_deinitialize(&context);
 
 	glfwDestroyWindow(window);
     	glfwTerminate();

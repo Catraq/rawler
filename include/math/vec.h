@@ -1,8 +1,8 @@
-#ifndef NHGUI_VEC_H
-#define NHGUI_VEC_H
+#ifndef RL_GUI_VEC_H
+#define RL_GUI_VEC_H
 
 
-struct nhgui_vec3
+struct rl_gui_vec3
 {
 	float x;
 	float y;
@@ -12,4 +12,4 @@ struct nhgui_vec3
 
 
 
-#endif //NHGUI_VEC3_H
+#endif //RL_GUI_VEC3_H

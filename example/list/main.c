@@ -4,8 +4,8 @@
 #include <string.h>
 
 #include "math/vec.h"
-#include "nhgui_glfw.h"
-#include "nhgui.h"
+#include "rl_gui_glfw.h"
+#include "rl_gui.h"
 
 
 #define ADD_BUFFER_SIZE 50
@@ -24,12 +24,12 @@ struct input_list_example
 	uint8_t add_text_buffer[ADD_TEXT_COUNT][ADD_BUFFER_SIZE];
 	uint32_t add_text_buffer_length[ADD_TEXT_COUNT];
 
-	struct nhgui_icon_blank add_blank;
-	struct nhgui_icon_blank delete_blank;
+	struct rl_gui_icon_blank add_blank;
+	struct rl_gui_icon_blank delete_blank;
 
-	struct nhgui_object_input_field add_field;
-	struct nhgui_object_text_list list_object;
-	struct nhgui_object_font_text_area text_area;
+	struct rl_gui_object_input_field add_field;
+	struct rl_gui_object_text_list list_object;
+	struct rl_gui_object_font_text_area text_area;
 };
 
 void 
@@ -37,11 +37,11 @@ input_list_example_initialize(
 		struct input_list_example *example
 )
 {
-	example->add_field = (struct nhgui_object_input_field){
+	example->add_field = (struct rl_gui_object_input_field){
 		.field_color = {.x = 0.3, .y = 0.3, .z = 0.3},
 	};
 
-	example->list_object = (struct nhgui_object_text_list){
+	example->list_object = (struct rl_gui_object_text_list){
 		.char_scroll_per_sec = 1,
 		.text_color = {.x = 1.0, .y = 1.0, .z = 1.0},	
 		.field_color = {.x = 0.0, .y = 0.0, .z = 0.0},	
@@ -50,34 +50,34 @@ input_list_example_initialize(
 	
 	};
 	
-	example->text_area = (struct nhgui_object_font_text_area){
+	example->text_area = (struct rl_gui_object_font_text_area){
 		.background_color = {.x = 0, .y = 0.3, .z = 0.3},
 		.font_color = {.x=1.0, .y=1.0, .z=1.0},
 	};
 
 }
 
-struct nhgui_result
+struct rl_gui_result
 input_list_example(
 		struct input_list_example *example,
-		struct nhgui_context *context,
-		struct nhgui_input *input,	
-		struct nhgui_object_font *font,
-		struct nhgui_result result
+		struct rl_gui_context *context,
+		struct rl_gui_input *input,	
+		struct rl_gui_object_font *font,
+		struct rl_gui_result result
 		)
 {
 	
-	struct nhgui_render_attribute radio_render_attribute = {
+	struct rl_gui_render_attribute radio_render_attribute = {
 		.height_mm = 3,
 	};
 
 
-	struct nhgui_render_attribute input_field_attribute = {
+	struct rl_gui_render_attribute input_field_attribute = {
 		.height_mm = 3,
 		.width_mm = 30,			
 	};
 
-	struct nhgui_result res = nhgui_object_input_field(
+	struct rl_gui_result res = rl_gui_object_input_field(
 			&example->add_field, 
 			context,
 			font,
@@ -88,9 +88,9 @@ input_list_example(
 			&example->add_buffer_length,
 			ADD_BUFFER_SIZE
 	);
-	res = nhgui_result_inc_x(res);	
+	res = rl_gui_result_inc_x(res);	
 
-	struct nhgui_render_attribute blank_attribute = {
+	struct rl_gui_render_attribute blank_attribute = {
 		.height_mm = res.y_inc_next,
 		.width_mm = 10,	
 		.r = 1.0,
@@ -98,7 +98,7 @@ input_list_example(
 	
 	const char add_text[] = "Add";
 
-	res = nhgui_icon_blank(
+	res = rl_gui_icon_blank(
 		&example->add_blank,
 		context,
 		&blank_attribute,
@@ -106,7 +106,7 @@ input_list_example(
 		res
 	);
 
-	struct nhgui_result icon_blank_center = nhgui_object_font_text_result_centered_by_previous_x(
+	struct rl_gui_result icon_blank_center = rl_gui_object_font_text_result_centered_by_previous_x(
 			res, 
 			context,
 			font,
@@ -116,7 +116,7 @@ input_list_example(
 	);
 
 
-	nhgui_object_font_text(
+	rl_gui_object_font_text(
 			context,
 			font,
 			add_text,
@@ -158,15 +158,15 @@ input_list_example(
 
 
 
-	res = nhgui_result_dec_y(res);	
-	res = nhgui_result_rewind_x_to(res, result);
+	res = rl_gui_result_dec_y(res);	
+	res = rl_gui_result_rewind_x_to(res, result);
 
-	struct nhgui_render_attribute input_list_attribute = {
+	struct rl_gui_render_attribute input_list_attribute = {
 		.height_mm = 3,
 		.width_mm = 70,			
 	};
 
-	struct nhgui_result text_list_result = nhgui_object_text_list(
+	struct rl_gui_result text_list_result = rl_gui_object_text_list(
 			&example->list_object,
 			context, 
 			(const char **)example->add_text_buffer_ptr,
@@ -184,9 +184,9 @@ input_list_example(
 		{	
 			const char delete_text[] = "Delete";
 			
-			res = nhgui_result_inc_x(example->list_object.selected_result);
+			res = rl_gui_result_inc_x(example->list_object.selected_result);
 
-			res = nhgui_icon_blank(
+			res = rl_gui_icon_blank(
 				&example->delete_blank,
 				context,
 				&blank_attribute,
@@ -195,7 +195,7 @@ input_list_example(
 			);
 
 
-			struct nhgui_result icon_blank_delete_center = nhgui_object_font_text_result_centered_by_previous_x(
+			struct rl_gui_result icon_blank_delete_center = rl_gui_object_font_text_result_centered_by_previous_x(
 					res, 
 					context,
 					font,
@@ -205,7 +205,7 @@ input_list_example(
 			);
 
 
-			nhgui_object_font_text(
+			rl_gui_object_font_text(
 					context,
 					font,
 					delete_text,
@@ -232,7 +232,7 @@ input_list_example(
 	}
 	
 
-	res = nhgui_result_dec_y(text_list_result);
+	res = rl_gui_result_dec_y(text_list_result);
 
 	const char text_area_text[] = { 
 		"The input field will scroll when overfilled and the list will have "
@@ -241,14 +241,14 @@ input_list_example(
 		"entire window is overfilled can a scroll bar be used. "
 	};
 
-	struct nhgui_render_attribute text_area_attribute = 
+	struct rl_gui_render_attribute text_area_attribute = 
 	{
 		.width_mm = 30,
 		.height_mm = 3,	
 	};
 
 	
-	res = nhgui_object_font_text_area(
+	res = rl_gui_object_font_text_area(
 			&example->text_area,
 			context,
 			font,
@@ -259,7 +259,7 @@ input_list_example(
 			sizeof(text_area_text)
 	);
 
-	res = nhgui_result_dec_y(res);
+	res = rl_gui_result_dec_y(res);
 	
 	return res;
 }
@@ -300,7 +300,7 @@ int main(int args, char *argv[])
 	res_y = mode->height;
 
 
-	glfwSetCharCallback(window, nhgui_glfw_char_callback);
+	glfwSetCharCallback(window, rl_gui_glfw_char_callback);
 
 	glfwMakeContextCurrent(window);
 	
@@ -331,14 +331,14 @@ int main(int args, char *argv[])
 	
 	int result = 0;
 	/* Create gui context */	
-	struct nhgui_context context;
-	result = nhgui_context_initialize(&context, (uint32_t)res_x, (uint32_t)res_y, (uint32_t)width_mm, (uint32_t)height_mm);
+	struct rl_gui_context context;
+	result = rl_gui_context_initialize(&context, (uint32_t)res_x, (uint32_t)res_y, (uint32_t)width_mm, (uint32_t)height_mm);
 	if(result < 0){
-		fprintf(stderr, "nhgui_context_initialize() failed. \n");
+		fprintf(stderr, "rl_gui_context_initialize() failed. \n");
 		exit(EXIT_FAILURE);
 	}
 
-	struct nhgui_render_attribute font_render_attribute = {
+	struct rl_gui_render_attribute font_render_attribute = {
 		.height_mm = 10,
 	};
 
@@ -347,11 +347,11 @@ int main(int args, char *argv[])
 
 
 	const char *font_filename = "../data/UbuntuMono-R.ttf";
-	struct nhgui_object_font font;
+	struct rl_gui_object_font font;
 
 	{
 		
-		result = nhgui_object_font_freetype_characters_initialize(
+		result = rl_gui_object_font_freetype_characters_initialize(
 				&context,
 				&font_render_attribute ,
 				&font, 
@@ -360,7 +360,7 @@ int main(int args, char *argv[])
 
 		if(result < 0)
 		{
-			fprintf(stderr, "nhgui_object_font_freetype_characters_initialize() failed. \n");
+			fprintf(stderr, "rl_gui_object_font_freetype_characters_initialize() failed. \n");
 			exit(EXIT_FAILURE);
 		}
 	
@@ -371,12 +371,12 @@ int main(int args, char *argv[])
 
 	input_list_example_initialize(&example_1);
 
-	struct nhgui_glfw_frame frame = nhgui_frame_create(window);
+	struct rl_gui_glfw_frame frame = rl_gui_frame_create(window);
 
 
 	while(!glfwWindowShouldClose(window))
 	{
-		struct nhgui_input input = nhgui_glfw_frame_begin(&frame, window);
+		struct rl_gui_input input = rl_gui_glfw_frame_begin(&frame, window);
 
 		glClearColor(0.1, 0.5, 0.5, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -389,7 +389,7 @@ int main(int args, char *argv[])
 	
 
 
-		struct nhgui_result result = {
+		struct rl_gui_result result = {
 			.y_mm = context.screen_height_mm * (float)input.height_pixel/(float)context.screen_resolution_y,
 		};
 		
@@ -404,12 +404,12 @@ int main(int args, char *argv[])
 
 
 
-		nhgui_glfw_frame_end(&frame, &input);	
+		rl_gui_glfw_frame_end(&frame, &input);	
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 	
-	nhgui_context_deinitialize(&context);
+	rl_gui_context_deinitialize(&context);
 
 	glfwDestroyWindow(window);
     	glfwTerminate();

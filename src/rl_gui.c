@@ -1,11 +1,11 @@
-#include "nhgui.h"
+#include "rl_gui.h"
 
 #define TEXT(x) #x
 
 
 
-int nhgui_context_initialize(
-		struct nhgui_context *context,
+int rl_gui_context_initialize(
+		struct rl_gui_context *context,
 	       	uint32_t screen_resolution_x, uint32_t screen_resolution_y,
 	       	uint32_t width_mm, uint32_t height_mm
 )
@@ -18,9 +18,9 @@ int nhgui_context_initialize(
 	context->screen_resolution_y = screen_resolution_y;
 
 	/* Common surface used for rendering operations */
-	result = nhgui_surface_initialize(&context->surface);
+	result = rl_gui_surface_initialize(&context->surface);
 	if(result < 0){
-		fprintf(stderr, "nhgui_surface_initialize() failed. \n");
+		fprintf(stderr, "rl_gui_surface_initialize() failed. \n");
 		return -1;
 	}
 	
@@ -28,63 +28,63 @@ int nhgui_context_initialize(
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	/* Initialize the blinking thing used with text input */
-	result = nhgui_icon_text_cursor_initialize(&context->text_cursor);
+	result = rl_gui_icon_text_cursor_initialize(&context->text_cursor);
 	if(result < 0)
 	{
-		fprintf(stderr, "nhgui_icon_text_cursor_initialize() failed. \n");
+		fprintf(stderr, "rl_gui_icon_text_cursor_initialize() failed. \n");
 
-		nhgui_surface_deinitialize(&context->surface);
+		rl_gui_surface_deinitialize(&context->surface);
 
 		return -1;
 	}
 
 	/* Initialize the blinking thing used with text input */
-	result = nhgui_icon_blank_initialize(&context->blank);
+	result = rl_gui_icon_blank_initialize(&context->blank);
 	if(result < 0)
 	{
-		fprintf(stderr, "nhgui_icon_blank_initialize() failed. \n");
+		fprintf(stderr, "rl_gui_icon_blank_initialize() failed. \n");
 		
-		nhgui_icon_text_cursor_deinitialize(&context->text_cursor);
-		nhgui_surface_deinitialize(&context->surface);
+		rl_gui_icon_text_cursor_deinitialize(&context->text_cursor);
+		rl_gui_surface_deinitialize(&context->surface);
 
 		return -1;
 	}
 
-	result = nhgui_object_font_text_initialize(&context->font);
+	result = rl_gui_object_font_text_initialize(&context->font);
 	if(result < 0){
 
-		nhgui_icon_text_cursor_deinitialize(&context->text_cursor);
-		nhgui_surface_deinitialize(&context->surface);
-		nhgui_icon_blank_deinitialize(&context->blank);
+		rl_gui_icon_text_cursor_deinitialize(&context->text_cursor);
+		rl_gui_surface_deinitialize(&context->surface);
+		rl_gui_icon_blank_deinitialize(&context->blank);
 
-		fprintf(stderr, "nhgui_object_font_text_initialize() failed. \n");
+		fprintf(stderr, "rl_gui_object_font_text_initialize() failed. \n");
 		return -1;	
 	}
 
 
-	result = nhgui_object_radio_button_initialize(&context->radio_button);
+	result = rl_gui_object_radio_button_initialize(&context->radio_button);
 	if(result < 0){
 
-		nhgui_icon_text_cursor_deinitialize(&context->text_cursor);
-		nhgui_surface_deinitialize(&context->surface);
-		nhgui_icon_blank_deinitialize(&context->blank);
-		nhgui_object_font_text_deinitialize(&context->font);
+		rl_gui_icon_text_cursor_deinitialize(&context->text_cursor);
+		rl_gui_surface_deinitialize(&context->surface);
+		rl_gui_icon_blank_deinitialize(&context->blank);
+		rl_gui_object_font_text_deinitialize(&context->font);
 
-		fprintf(stderr, "nhgui_object_radio_button_initialize() failed. \n");
+		fprintf(stderr, "rl_gui_object_radio_button_initialize() failed. \n");
 		return -1;
 	}
 
 
 
-	result = nhgui_icon_menu_initialize(&context->menu);
+	result = rl_gui_icon_menu_initialize(&context->menu);
 	if(result < 0){
 
-		nhgui_icon_text_cursor_deinitialize(&context->text_cursor);
-		nhgui_surface_deinitialize(&context->surface);
-		nhgui_icon_blank_deinitialize(&context->blank);
-		nhgui_object_font_text_deinitialize(&context->font);
+		rl_gui_icon_text_cursor_deinitialize(&context->text_cursor);
+		rl_gui_surface_deinitialize(&context->surface);
+		rl_gui_icon_blank_deinitialize(&context->blank);
+		rl_gui_object_font_text_deinitialize(&context->font);
 
-		fprintf(stderr, "nhgui_icon_menu_initialize() failed. \n");
+		fprintf(stderr, "rl_gui_icon_menu_initialize() failed. \n");
 		goto failure;	
 	}
 
@@ -93,27 +93,27 @@ int nhgui_context_initialize(
 	
 	/* Clean up those instances that use a flag to determine initializion state */
 failure:
-	nhgui_icon_menu_deinitialize(&context->menu);
-	nhgui_object_radio_button_deinitialize(&context->radio_button);
+	rl_gui_icon_menu_deinitialize(&context->menu);
+	rl_gui_object_radio_button_deinitialize(&context->radio_button);
 
 	return -1;
 }
 
 void 
-nhgui_context_deinitialize(
-		struct nhgui_context *context
+rl_gui_context_deinitialize(
+		struct rl_gui_context *context
 )
 {
-	nhgui_icon_text_cursor_deinitialize(&context->text_cursor);
-	nhgui_surface_deinitialize(&context->surface);
-	nhgui_icon_blank_deinitialize(&context->blank);
-	nhgui_object_font_text_deinitialize(&context->font);
-	nhgui_object_radio_button_deinitialize(&context->radio_button);
-	nhgui_icon_menu_deinitialize(&context->menu);
+	rl_gui_icon_text_cursor_deinitialize(&context->text_cursor);
+	rl_gui_surface_deinitialize(&context->surface);
+	rl_gui_icon_blank_deinitialize(&context->blank);
+	rl_gui_object_font_text_deinitialize(&context->font);
+	rl_gui_object_radio_button_deinitialize(&context->radio_button);
+	rl_gui_icon_menu_deinitialize(&context->menu);
 }
 
 int
-nhgui_common_uniform_locations_find(struct nhgui_common_uniform_locations *locations, const GLuint program)
+rl_gui_common_uniform_locations_find(struct rl_gui_common_uniform_locations *locations, const GLuint program)
 {
 	/* Common OpenGL uniform location finding */
 	const char *position_uniform_str = "position";
@@ -156,11 +156,11 @@ nhgui_common_uniform_locations_find(struct nhgui_common_uniform_locations *locat
 }
 
 void
-nhgui_common_uniform_locations_set(
-		const struct nhgui_common_uniform_locations *locations,
-	       	const struct nhgui_context *context,
-	       	const struct nhgui_input *input,
-	       	const struct nhgui_result result,
+rl_gui_common_uniform_locations_set(
+		const struct rl_gui_common_uniform_locations *locations,
+	       	const struct rl_gui_context *context,
+	       	const struct rl_gui_input *input,
+	       	const struct rl_gui_result result,
 	       	const float width_mm, 
 		const float height_mm, 
 		const float r,
@@ -202,8 +202,8 @@ nhgui_common_uniform_locations_set(
 
 }
 
-struct nhgui_result 
-nhgui_result_margin(struct nhgui_result result, float margin_x_mm, float margin_y_mm)
+struct rl_gui_result 
+rl_gui_result_margin(struct rl_gui_result result, float margin_x_mm, float margin_y_mm)
 {
 	result.x_mm += margin_x_mm;
 	result.y_mm -= margin_y_mm;
@@ -211,8 +211,8 @@ nhgui_result_margin(struct nhgui_result result, float margin_x_mm, float margin_
 }
 
 
-struct nhgui_result
-nhgui_result_inc_x(struct nhgui_result result)
+struct rl_gui_result
+rl_gui_result_inc_x(struct rl_gui_result result)
 {
 	result.x_mm = result.x_mm + result.x_inc_next;
 	result.x_inc_next = 0;
@@ -221,8 +221,8 @@ nhgui_result_inc_x(struct nhgui_result result)
 
 }
 
-struct nhgui_result
-nhgui_result_dec_y(struct nhgui_result result)
+struct rl_gui_result
+rl_gui_result_dec_y(struct rl_gui_result result)
 {
 	result.y_mm = result.y_mm - result.y_inc_next;
 	result.y_inc_next = 0;
@@ -231,16 +231,16 @@ nhgui_result_dec_y(struct nhgui_result result)
 
 }
 
-struct nhgui_result
-nhgui_result_rewind_x(struct nhgui_result result)
+struct rl_gui_result
+rl_gui_result_rewind_x(struct rl_gui_result result)
 {
 	result.x_mm = 0;
 	return result;
 
 }
 
-struct nhgui_result
-nhgui_result_rewind_x_to(struct nhgui_result result, struct nhgui_result to)
+struct rl_gui_result
+rl_gui_result_rewind_x_to(struct rl_gui_result result, struct rl_gui_result to)
 {
 	result.x_mm = to.x_mm;
 	result.x_inc_next = 0;
@@ -251,17 +251,17 @@ nhgui_result_rewind_x_to(struct nhgui_result result, struct nhgui_result to)
 
 
 
-struct nhgui_result
-nhgui_object_text_list(
-		struct nhgui_object_text_list *list,
-		const struct nhgui_context *context,
+struct rl_gui_result
+rl_gui_object_text_list(
+		struct rl_gui_object_text_list *list,
+		const struct rl_gui_context *context,
 		const char *entry[],
 		const uint32_t *entry_length,
 		const uint32_t entry_count,
-		const struct nhgui_object_font *font,
-		const struct nhgui_render_attribute *attribute,
-		struct nhgui_input *input, 
-		const struct nhgui_result result
+		const struct rl_gui_object_font *font,
+		const struct rl_gui_render_attribute *attribute,
+		struct rl_gui_input *input, 
+		const struct rl_gui_result result
 
 )
 {
@@ -270,11 +270,11 @@ nhgui_object_text_list(
 	float cursor_y_mm = (float)input->height_pixel / (float)context->screen_resolution_y * (float)context->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
 
 
-	struct nhgui_result r = result;	
+	struct rl_gui_result r = result;	
 	for(uint32_t i = 0; i < entry_count; i++)
 	{
 		
-		struct nhgui_result result_tmp = r;
+		struct rl_gui_result result_tmp = r;
 		result_tmp.y_mm -= attribute->height_mm;
 		
 		if(input->cursor_button_left > 0)
@@ -300,7 +300,7 @@ nhgui_object_text_list(
 		if(list->selected > 0 && list->selected_index == i)
 		{
 		
-			struct nhgui_render_attribute selected_attribute = {
+			struct rl_gui_render_attribute selected_attribute = {
 				.height_mm = attribute->height_mm,
 				.width_mm = attribute->width_mm,
 				.r = list->selected_field_color.x,
@@ -308,7 +308,7 @@ nhgui_object_text_list(
 				.b = list->selected_field_color.z,
 			};
 
-			r = nhgui_icon_blank_no_object(
+			r = rl_gui_icon_blank_no_object(
 					context,
 					&selected_attribute,
 					input,
@@ -318,7 +318,7 @@ nhgui_object_text_list(
 			list->selected_result = r;
 
 			uint32_t overflow_count_index = 0;
-			uint32_t overflow_count = nhgui_object_font_text_overflow_count(
+			uint32_t overflow_count = rl_gui_object_font_text_overflow_count(
 				r,	
 				context,
 				font,
@@ -334,12 +334,12 @@ nhgui_object_text_list(
 				overflow_count_index = s%overflow_count;
 			}
 
-			struct nhgui_render_attribute selected_font_attribute = *attribute;
+			struct rl_gui_render_attribute selected_font_attribute = *attribute;
 			selected_font_attribute.r = list->selected_text_color.x;
 			selected_font_attribute.g = list->selected_text_color.y;
 			selected_font_attribute.b = list->selected_text_color.z;
 
-			nhgui_object_font_text(
+			rl_gui_object_font_text(
 					context, 
 					font, 
 					&entry[i][overflow_count_index],
@@ -352,7 +352,7 @@ nhgui_object_text_list(
 		else
 		{
 
-			struct nhgui_render_attribute _attribute = {
+			struct rl_gui_render_attribute _attribute = {
 				.height_mm = attribute->height_mm,	
 				.width_mm = attribute->width_mm,
 				.r = list->field_color.x,
@@ -361,7 +361,7 @@ nhgui_object_text_list(
 			};
 
 
-			r = nhgui_icon_blank_no_object(
+			r = rl_gui_icon_blank_no_object(
 					context,
 					&_attribute,
 					input,
@@ -370,7 +370,7 @@ nhgui_object_text_list(
 
 
 			uint32_t overflow_count_index = 0;
-			uint32_t overflow_count = nhgui_object_font_text_overflow_count(
+			uint32_t overflow_count = rl_gui_object_font_text_overflow_count(
 				r,	
 				context,
 				font,
@@ -385,12 +385,12 @@ nhgui_object_text_list(
 				overflow_count_index = (overflow_count + s)%overflow_count;
 			}
 
-			struct nhgui_render_attribute font_attribute = *attribute;
+			struct rl_gui_render_attribute font_attribute = *attribute;
 			font_attribute.r = list->text_color.x;
 			font_attribute.g = list->text_color.y;
 			font_attribute.b = list->text_color.z;
 
-			nhgui_object_font_text(
+			rl_gui_object_font_text(
 					context, 
 					font, 
 					&entry[i][overflow_count_index],
@@ -404,7 +404,7 @@ nhgui_object_text_list(
 		}
 
 		if(i != entry_count - 1)
-			r = nhgui_result_dec_y(r);
+			r = rl_gui_result_dec_y(r);
 
 	}
 
@@ -413,7 +413,7 @@ nhgui_object_text_list(
 
 
 
-GLuint nhgui_shader_vertex_create_from_memory(
+GLuint rl_gui_shader_vertex_create_from_memory(
 		uint8_t *vertex_source, uint32_t vertex_length, 
 		uint8_t *fragment_source, uint32_t fragment_length
 )
@@ -430,7 +430,7 @@ GLuint nhgui_shader_vertex_create_from_memory(
 
 	int32_t fragment_source_length[] = {fragment_length};
 
-	GLuint program = nhgui_shader_vertex_create(
+	GLuint program = rl_gui_shader_vertex_create(
 			vertex_source_list, vertex_source_length, 1,
 			fragment_source_list, fragment_source_length, 1
 	);
@@ -448,7 +448,7 @@ GLuint nhgui_shader_vertex_create_from_memory(
 }
 
 
-GLuint nhgui_shader_vertex_create(
+GLuint rl_gui_shader_vertex_create(
 		const char **vertex_source, 
 		int32_t *vertex_source_length, 
 		uint32_t vertex_source_count, 
@@ -535,56 +535,56 @@ GLuint nhgui_shader_vertex_create(
 }
 
 
-const float nhgui_surface_quad_vertices[] = {
+const float rl_gui_surface_quad_vertices[] = {
 	-1.0f, 1.0f, 
 	1.0f, 1.0f,
 	1.0, -1.0f,
 	-1.0f, -1.0f
 };	
 
-const GLuint nhgui_surface_quad_vertices_count = sizeof(nhgui_surface_quad_vertices)/sizeof(nhgui_surface_quad_vertices[0]);
+const GLuint rl_gui_surface_quad_vertices_count = sizeof(rl_gui_surface_quad_vertices)/sizeof(rl_gui_surface_quad_vertices[0]);
 
-const GLuint nhgui_surface_quad_indices[] = {
+const GLuint rl_gui_surface_quad_indices[] = {
 	1, 0, 2,
 	2, 0, 3
 };
 
-const GLuint nhgui_surface_quad_indices_count = sizeof(nhgui_surface_quad_indices)/sizeof(nhgui_surface_quad_indices[0]);
+const GLuint rl_gui_surface_quad_indices_count = sizeof(rl_gui_surface_quad_indices)/sizeof(rl_gui_surface_quad_indices[0]);
 
-int nhgui_surface_initialize(struct nhgui_surface *surface)
+int rl_gui_surface_initialize(struct rl_gui_surface *surface)
 {
 	/* Setup OpenGL buffers and vertex arrays for drawing a quad */
-	GLuint nhgui_surface_vertex_array, nhgui_surface_vertex_buffer, nhgui_surface_element_buffer;
+	GLuint rl_gui_surface_vertex_array, rl_gui_surface_vertex_buffer, rl_gui_surface_element_buffer;
 
-	glGenVertexArrays(1, &nhgui_surface_vertex_array);
-	glBindVertexArray(nhgui_surface_vertex_array);
+	glGenVertexArrays(1, &rl_gui_surface_vertex_array);
+	glBindVertexArray(rl_gui_surface_vertex_array);
 
-	glGenBuffers(1, &nhgui_surface_element_buffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, nhgui_surface_element_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(nhgui_surface_quad_indices), nhgui_surface_quad_indices, GL_STATIC_DRAW); 
+	glGenBuffers(1, &rl_gui_surface_element_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rl_gui_surface_element_buffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rl_gui_surface_quad_indices), rl_gui_surface_quad_indices, GL_STATIC_DRAW); 
 
 
-	glGenBuffers(1, &nhgui_surface_vertex_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, nhgui_surface_vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(nhgui_surface_quad_vertices), nhgui_surface_quad_vertices, GL_STATIC_DRAW); 
+	glGenBuffers(1, &rl_gui_surface_vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, rl_gui_surface_vertex_buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(rl_gui_surface_quad_vertices), rl_gui_surface_quad_vertices, GL_STATIC_DRAW); 
 
-	const GLuint nhgui_surface_vertex_index = 0;
-	glEnableVertexAttribArray(nhgui_surface_vertex_index);
-	glVertexAttribPointer(nhgui_surface_vertex_index, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	const GLuint rl_gui_surface_vertex_index = 0;
+	glEnableVertexAttribArray(rl_gui_surface_vertex_index);
+	glVertexAttribPointer(rl_gui_surface_vertex_index, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindVertexArray(0);
 
-	surface->vertex_array = nhgui_surface_vertex_array;
-	surface->element_buffer = nhgui_surface_element_buffer;
-	surface->vertex_buffer = nhgui_surface_vertex_buffer;
-	surface->draw_count = nhgui_surface_quad_indices_count;
+	surface->vertex_array = rl_gui_surface_vertex_array;
+	surface->element_buffer = rl_gui_surface_element_buffer;
+	surface->vertex_buffer = rl_gui_surface_vertex_buffer;
+	surface->draw_count = rl_gui_surface_quad_indices_count;
 
 	return 0;
 
 }
 
 
-void nhgui_surface_deinitialize(struct nhgui_surface *surface)
+void rl_gui_surface_deinitialize(struct rl_gui_surface *surface)
 {
 	glDeleteVertexArrays(1, &surface->vertex_array);
 	glDeleteBuffers(1, &surface->element_buffer);
@@ -592,42 +592,42 @@ void nhgui_surface_deinitialize(struct nhgui_surface *surface)
 }
 
 
-void nhgui_surface_render(const struct nhgui_surface *nhgui_surface)
+void rl_gui_surface_render(const struct rl_gui_surface *rl_gui_surface)
 {
-	glBindVertexArray(nhgui_surface->vertex_array);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, nhgui_surface->element_buffer);
-	glDrawElements(GL_TRIANGLE_STRIP, nhgui_surface->draw_count, GL_UNSIGNED_INT, 0);	
+	glBindVertexArray(rl_gui_surface->vertex_array);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rl_gui_surface->element_buffer);
+	glDrawElements(GL_TRIANGLE_STRIP, rl_gui_surface->draw_count, GL_UNSIGNED_INT, 0);	
 	glBindVertexArray(0);
 
 }
 
-void nhgui_surface_render_instanced(const struct nhgui_surface *nhgui_surface, const uint32_t instance_count)
+void rl_gui_surface_render_instanced(const struct rl_gui_surface *rl_gui_surface, const uint32_t instance_count)
 {
-	glBindVertexArray(nhgui_surface->vertex_array);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, nhgui_surface->element_buffer);
-	glDrawElementsInstanced(GL_TRIANGLE_STRIP, nhgui_surface->draw_count, GL_UNSIGNED_INT, 0, instance_count);	
+	glBindVertexArray(rl_gui_surface->vertex_array);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rl_gui_surface->element_buffer);
+	glDrawElementsInstanced(GL_TRIANGLE_STRIP, rl_gui_surface->draw_count, GL_UNSIGNED_INT, 0, instance_count);	
 	glBindVertexArray(0);
 }
 
 
-struct nhgui_result 
-nhgui_icon_blank_no_object(
-		const struct nhgui_context *context, 
-		const struct nhgui_render_attribute *attribute,
-		const struct nhgui_input *input, 
-		const struct nhgui_result result
+struct rl_gui_result 
+rl_gui_icon_blank_no_object(
+		const struct rl_gui_context *context, 
+		const struct rl_gui_render_attribute *attribute,
+		const struct rl_gui_input *input, 
+		const struct rl_gui_result result
 )
 {
-	const struct nhgui_icon_blank_instance *instance = &context->blank;
+	const struct rl_gui_icon_blank_instance *instance = &context->blank;
 
 
-	struct nhgui_result result_tmp = result;
+	struct rl_gui_result result_tmp = result;
 	result_tmp.y_mm -= attribute->height_mm;
 
 	glUseProgram(instance->program);	
 	CHECK_GL_ERROR();
 
-	nhgui_common_uniform_locations_set(
+	rl_gui_common_uniform_locations_set(
 			&instance->locations,
 		       	context,
 		       	input,
@@ -637,12 +637,12 @@ nhgui_icon_blank_no_object(
 	);
 	CHECK_GL_ERROR();
 
-	nhgui_surface_render(&context->surface);
+	rl_gui_surface_render(&context->surface);
 	CHECK_GL_ERROR();
 
 
 	
-	struct nhgui_result r = result;
+	struct rl_gui_result r = result;
 	r.y_inc_next = attribute->height_mm;
 	r.x_inc_next = attribute->width_mm;
 
@@ -650,21 +650,21 @@ nhgui_icon_blank_no_object(
 	return r;
 }
 
-struct nhgui_result 
-nhgui_icon_blank(
-		struct nhgui_icon_blank *blank,
-		const struct nhgui_context *context, 
-		const struct nhgui_render_attribute *attribute,
-		struct nhgui_input *input, 
-		const struct nhgui_result result
+struct rl_gui_result 
+rl_gui_icon_blank(
+		struct rl_gui_icon_blank *blank,
+		const struct rl_gui_context *context, 
+		const struct rl_gui_render_attribute *attribute,
+		struct rl_gui_input *input, 
+		const struct rl_gui_result result
 )
 {
-	const struct nhgui_icon_blank_instance *instance = &context->blank;
+	const struct rl_gui_icon_blank_instance *instance = &context->blank;
 
 	float cursor_x_mm = (float)input->width_pixel / (float)context->screen_resolution_x * (float)context->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
 	float cursor_y_mm = (float)input->height_pixel / (float)context->screen_resolution_y * (float)context->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
 	
-	struct nhgui_result result_tmp = result;
+	struct rl_gui_result result_tmp = result;
 	result_tmp.y_mm -= attribute->height_mm;
 	
 	blank->clicked = 0;
@@ -723,7 +723,7 @@ nhgui_icon_blank(
 
 	glUseProgram(instance->program);	
 
-	nhgui_common_uniform_locations_set(
+	rl_gui_common_uniform_locations_set(
 			&instance->locations,
 		       	context,
 		       	input,
@@ -732,9 +732,9 @@ nhgui_icon_blank(
 			attribute->r, attribute->g, attribute->b
 	);
 
-	nhgui_surface_render(&context->surface);
+	rl_gui_surface_render(&context->surface);
 	
-	struct nhgui_result r = result;
+	struct rl_gui_result r = result;
 	r.y_inc_next = attribute->height_mm;
 	r.x_inc_next = attribute->width_mm;
 
@@ -743,7 +743,7 @@ nhgui_icon_blank(
 
 
 int 
-nhgui_icon_blank_initialize(struct nhgui_icon_blank_instance *instance)
+rl_gui_icon_blank_initialize(struct rl_gui_icon_blank_instance *instance)
 {
 
 	uint8_t vertex_source[] = 
@@ -763,23 +763,23 @@ nhgui_icon_blank_initialize(struct nhgui_icon_blank_instance *instance)
 				"	fcolor = vec4(color, 0);	\n"
 				"}			\n";	
 
-	instance->program = nhgui_shader_vertex_create_from_memory(
+	instance->program = rl_gui_shader_vertex_create_from_memory(
 			vertex_source, sizeof(vertex_source), 
 			fragment_source, sizeof(fragment_source)
 	);
 
 	if(instance->program == 0)
 	{
-		fprintf(stderr, "nhgui_shader_vertex_create_from_memory() failed. \n");
+		fprintf(stderr, "rl_gui_shader_vertex_create_from_memory() failed. \n");
 		return -1;	
 	
 	}
 
-	int result = nhgui_common_uniform_locations_find(&instance->locations, instance->program);
+	int result = rl_gui_common_uniform_locations_find(&instance->locations, instance->program);
 	if(result < 0){
 		glDeleteProgram(instance->program);
 
-		fprintf(stderr, "nhgui_common_uniform_locations_find() failed. \n");
+		fprintf(stderr, "rl_gui_common_uniform_locations_find() failed. \n");
 		return -1;
 	}
 
@@ -788,29 +788,29 @@ nhgui_icon_blank_initialize(struct nhgui_icon_blank_instance *instance)
 }
 
 void
-nhgui_icon_blank_deinitialize(struct nhgui_icon_blank_instance *instance)
+rl_gui_icon_blank_deinitialize(struct rl_gui_icon_blank_instance *instance)
 {
 	glDeleteProgram(instance->program);
 }
 
 
-struct nhgui_result
-nhgui_icon_menu(
-		struct nhgui_icon_menu *object,
-		const struct nhgui_context *context, 
-		const struct nhgui_render_attribute *attribute,
-		const struct nhgui_input *input, 
-		const struct nhgui_result result
+struct rl_gui_result
+rl_gui_icon_menu(
+		struct rl_gui_icon_menu *object,
+		const struct rl_gui_context *context, 
+		const struct rl_gui_render_attribute *attribute,
+		const struct rl_gui_input *input, 
+		const struct rl_gui_result result
 )
 {
 
 
-	const struct nhgui_icon_menu_instance *instance = &context->menu;
+	const struct rl_gui_icon_menu_instance *instance = &context->menu;
 
 	float cursor_x_mm = (float)input->width_pixel / (float)context->screen_resolution_x * (float)context->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
 	float cursor_y_mm = (float)input->height_pixel / (float)context->screen_resolution_y * (float)context->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
 	
-	struct nhgui_result result_tmp = result;
+	struct rl_gui_result result_tmp = result;
 	result_tmp.y_mm -= attribute->height_mm;
 
 	if(input->cursor_button_left > 0)
@@ -825,16 +825,16 @@ nhgui_icon_menu(
 	
 	glUseProgram(instance->program);	
 
-	nhgui_common_uniform_locations_set(
+	rl_gui_common_uniform_locations_set(
 			&instance->locations, 
 			context, input, result_tmp, 
 			attribute->height_mm, attribute->height_mm,
 			attribute->r, attribute->g, attribute->b
 	);
 
-	nhgui_surface_render(&context->surface);
+	rl_gui_surface_render(&context->surface);
 
-	struct nhgui_result render_result = result;
+	struct rl_gui_result render_result = result;
 	render_result.y_inc_next = attribute->height_mm;
 	render_result.x_inc_next = attribute->height_mm;
 
@@ -844,7 +844,7 @@ nhgui_icon_menu(
 
 
 int 
-nhgui_icon_menu_initialize(struct nhgui_icon_menu_instance *instance)
+rl_gui_icon_menu_initialize(struct rl_gui_icon_menu_instance *instance)
 {
 	uint8_t vertex_source[] = 
 				"#version 430 core \n "
@@ -875,21 +875,21 @@ nhgui_icon_menu_initialize(struct nhgui_icon_menu_instance *instance)
 				"	}				\n"
 				"}			\n";	
 
-	instance->program = nhgui_shader_vertex_create_from_memory(
+	instance->program = rl_gui_shader_vertex_create_from_memory(
 			vertex_source, sizeof(vertex_source), 
 			fragment_source, sizeof(fragment_source)
 	);
 
 	if(instance->program == 0)
 	{
-		fprintf(stderr, "nhgui_shader_vertex_create_from_memory() failed. \n");
+		fprintf(stderr, "rl_gui_shader_vertex_create_from_memory() failed. \n");
 		return -1;	
 	}
 	
-	int result = nhgui_common_uniform_locations_find(&instance->locations, instance->program);
+	int result = rl_gui_common_uniform_locations_find(&instance->locations, instance->program);
 	if(result < 0)
 	{
-		fprintf(stderr, "nhgui_common_uniform_locations_find() failed. \n");
+		fprintf(stderr, "rl_gui_common_uniform_locations_find() failed. \n");
 		glDeleteProgram(instance->program);
 		return -1;
 	}
@@ -900,7 +900,7 @@ nhgui_icon_menu_initialize(struct nhgui_icon_menu_instance *instance)
 }
 
 void
-nhgui_icon_menu_deinitialize(struct nhgui_icon_menu_instance *instance)
+rl_gui_icon_menu_deinitialize(struct rl_gui_icon_menu_instance *instance)
 {
 	if(instance->initialized > 0)
 	{
@@ -910,22 +910,22 @@ nhgui_icon_menu_deinitialize(struct nhgui_icon_menu_instance *instance)
 }
 
 
-struct nhgui_result 
-nhgui_icon_text_cursor(
-		const struct nhgui_context *context, 
-		const struct nhgui_render_attribute *attribute,
-		const struct nhgui_input *input, 
-		const struct nhgui_result result
+struct rl_gui_result 
+rl_gui_icon_text_cursor(
+		const struct rl_gui_context *context, 
+		const struct rl_gui_render_attribute *attribute,
+		const struct rl_gui_input *input, 
+		const struct rl_gui_result result
 )
 {
 	
-	const struct nhgui_icon_text_cursor_instance *instance = &context->text_cursor;
+	const struct rl_gui_icon_text_cursor_instance *instance = &context->text_cursor;
 
 	glUseProgram(instance->program);	
 	
-	struct nhgui_result result_tmp = result;
+	struct rl_gui_result result_tmp = result;
 	result_tmp.y_mm -= attribute->height_mm;
-	nhgui_common_uniform_locations_set(
+	rl_gui_common_uniform_locations_set(
 			&instance->locations,
 		       	context, input, result_tmp, 
 			attribute->width_mm, attribute->height_mm,
@@ -936,9 +936,9 @@ nhgui_icon_text_cursor(
 	uint32_t time_sec = (uint32_t)input->time_sec;
 	float r = input->time_sec - time_sec;
 	if(r < 0.5f)
-		nhgui_surface_render(&context->surface);
+		rl_gui_surface_render(&context->surface);
 	
-	struct nhgui_result res = result;
+	struct rl_gui_result res = result;
 	res.y_mm += attribute->height_mm;
 	res.x_mm += attribute->height_mm;
 
@@ -947,7 +947,7 @@ nhgui_icon_text_cursor(
 
 
 int 
-nhgui_icon_text_cursor_initialize(struct nhgui_icon_text_cursor_instance *instance)
+rl_gui_icon_text_cursor_initialize(struct rl_gui_icon_text_cursor_instance *instance)
 {
 	uint8_t vertex_source[] = 
 				"#version 430 core \n "
@@ -966,7 +966,7 @@ nhgui_icon_text_cursor_initialize(struct nhgui_icon_text_cursor_instance *instan
 				"	fcolor = vec4(color, 0);	\n"
 				"}			\n";	
 
-	instance->program = nhgui_shader_vertex_create_from_memory(
+	instance->program = rl_gui_shader_vertex_create_from_memory(
 			vertex_source, sizeof(vertex_source), 
 			fragment_source, sizeof(fragment_source)
 	);
@@ -974,11 +974,11 @@ nhgui_icon_text_cursor_initialize(struct nhgui_icon_text_cursor_instance *instan
 
 	if(instance->program == 0)
 	{
-		fprintf(stderr, "nhgui_shader_vertex_create_from_file() failed. \n");
+		fprintf(stderr, "rl_gui_shader_vertex_create_from_file() failed. \n");
 		return -1;	
 	}
 	
-	int result = nhgui_common_uniform_locations_find(
+	int result = rl_gui_common_uniform_locations_find(
 			&instance->locations, 
 			instance->program
 	);
@@ -986,7 +986,7 @@ nhgui_icon_text_cursor_initialize(struct nhgui_icon_text_cursor_instance *instan
 	if(result < 0){
 		glDeleteProgram(instance->program);
 
-		fprintf(stderr, "nhgui_common_uniform_locations_find() failed. \n");
+		fprintf(stderr, "rl_gui_common_uniform_locations_find() failed. \n");
 		return -1;
 	}
 
@@ -994,17 +994,17 @@ nhgui_icon_text_cursor_initialize(struct nhgui_icon_text_cursor_instance *instan
 }
 
 void
-nhgui_icon_text_cursor_deinitialize(struct nhgui_icon_text_cursor_instance *instance)
+rl_gui_icon_text_cursor_deinitialize(struct rl_gui_icon_text_cursor_instance *instance)
 {
 	glDeleteProgram(instance->program);
 }
 
 uint32_t 
-nhgui_object_font_text_overflow_count(
-		const struct nhgui_result within, 
-		const struct nhgui_context *context,
-		const struct nhgui_object_font *font,
-		const struct nhgui_render_attribute *attribute,
+rl_gui_object_font_text_overflow_count(
+		const struct rl_gui_result within, 
+		const struct rl_gui_context *context,
+		const struct rl_gui_object_font *font,
+		const struct rl_gui_render_attribute *attribute,
 		const char *text,
 		const uint32_t text_length
 )
@@ -1040,14 +1040,14 @@ nhgui_object_font_text_overflow_count(
 
 
 
-struct nhgui_result 
-nhgui_object_input_field(
-		struct nhgui_object_input_field *field,
-		const struct nhgui_context *context,
-		const struct nhgui_object_font *font,
-		const struct nhgui_render_attribute *attribute,
-		struct nhgui_input *input, 
-		const struct nhgui_result result,
+struct rl_gui_result 
+rl_gui_object_input_field(
+		struct rl_gui_object_input_field *field,
+		const struct rl_gui_context *context,
+		const struct rl_gui_object_font *font,
+		const struct rl_gui_render_attribute *attribute,
+		struct rl_gui_input *input, 
+		const struct rl_gui_result result,
 		char *input_buffer, 
 		uint32_t *input_buffer_length,
 		const uint32_t input_buffer_size
@@ -1057,7 +1057,7 @@ nhgui_object_input_field(
 	
 	
 
-	struct nhgui_render_attribute blank_attribute = 
+	struct rl_gui_render_attribute blank_attribute = 
 	{
 		.width_mm = attribute->width_mm,
 		.height_mm = attribute->height_mm,	
@@ -1068,7 +1068,7 @@ nhgui_object_input_field(
 
 	/* Background of the input field.
 	 * Used for input too.  */
-	struct nhgui_result background_result = nhgui_icon_blank(
+	struct rl_gui_result background_result = rl_gui_icon_blank(
 			&field->blank_object,
 			context,
 			&blank_attribute,
@@ -1081,7 +1081,7 @@ nhgui_object_input_field(
 	 * from the keyboard */	
 	if(field->blank_object.selected > 0)
 	{
-		int32_t delta_characters = nhgui_input_buffer(
+		int32_t delta_characters = rl_gui_input_buffer(
 				input_buffer, 
 				input_buffer_length,
 				input_buffer_size, 
@@ -1122,7 +1122,7 @@ nhgui_object_input_field(
 	/* If the blank was clicked then compute the index of the selcted character, 
 	 * if no index is found. Then it is safe to assume that area clicked was 
 	 * past the text and cursor index is set as the last character */
-	struct nhgui_result cursor_result = background_result ;
+	struct rl_gui_result cursor_result = background_result ;
 	if(field->blank_object.clicked > 0)
 	{
 		float cursor_x_mm = (float)input->width_pixel / (float)context->screen_resolution_x * (float)context->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
@@ -1165,7 +1165,7 @@ nhgui_object_input_field(
 	}
 
 	/* Find where the cursor should be placed */
-	struct nhgui_render_attribute cursor_attribute = 
+	struct rl_gui_render_attribute cursor_attribute = 
 	{
 		.width_mm = attribute->height_mm,
 		.height_mm = attribute->height_mm,
@@ -1198,7 +1198,7 @@ nhgui_object_input_field(
 	if(field->blank_object.selected > 0)
 	{	
 		/* This is cursor placed behind the text */
-		nhgui_icon_text_cursor(
+		rl_gui_icon_text_cursor(
 				context,
 				&cursor_attribute,
 				input,
@@ -1206,7 +1206,7 @@ nhgui_object_input_field(
 		);
 	}
 
-	struct nhgui_render_attribute font_attribute = 
+	struct rl_gui_render_attribute font_attribute = 
 	{
 		.height_mm = attribute->height_mm,
 		.r = 1.0f,	
@@ -1215,7 +1215,7 @@ nhgui_object_input_field(
 	};
 
 
-	nhgui_object_font_text(
+	rl_gui_object_font_text(
 			context, 
 			font, 
 			&input_buffer[overflow_count],
@@ -1231,21 +1231,21 @@ nhgui_object_input_field(
 
 
 
-struct nhgui_result 
-nhgui_object_input_field_float(
-		struct nhgui_object_input_field_float *float_field,
-		const struct nhgui_context *context,
-		const struct nhgui_object_font *font,
-		const struct nhgui_render_attribute *attribute,
-		struct nhgui_input *input, 
-		const struct nhgui_result result,
+struct rl_gui_result 
+rl_gui_object_input_field_float(
+		struct rl_gui_object_input_field_float *float_field,
+		const struct rl_gui_context *context,
+		const struct rl_gui_object_font *font,
+		const struct rl_gui_render_attribute *attribute,
+		struct rl_gui_input *input, 
+		const struct rl_gui_result result,
 		float *value
 		
 )
 {
-	struct nhgui_object_input_field *field = &float_field->field;
+	struct rl_gui_object_input_field *field = &float_field->field;
 
-	struct nhgui_render_attribute blank_attribute = 
+	struct rl_gui_render_attribute blank_attribute = 
 	{
 		.width_mm = attribute->width_mm,
 		.height_mm = attribute->height_mm,	
@@ -1256,7 +1256,7 @@ nhgui_object_input_field_float(
 
 	/* Background of the input field.
 	 * Used for input too.  */
-	struct nhgui_result background_result = nhgui_icon_blank(
+	struct rl_gui_result background_result = rl_gui_icon_blank(
 			&field->blank_object,
 			context,
 			&blank_attribute,
@@ -1295,7 +1295,7 @@ nhgui_object_input_field_float(
 	 * from the keyboard */	
 	if(field->blank_object.selected > 0)
 	{
-		int32_t delta_characters = nhgui_input_buffer(
+		int32_t delta_characters = rl_gui_input_buffer(
 				input_buffer, 
 				input_buffer_length,
 				input_buffer_size, 
@@ -1409,7 +1409,7 @@ nhgui_object_input_field_float(
 	/* If the blank was clicked then compute the index of the selcted character, 
 	 * if no index is found. Then it is safe to assume that area clicked was 
 	 * past the text and cursor index is set as the last character */
-	struct nhgui_result cursor_result = background_result ;
+	struct rl_gui_result cursor_result = background_result ;
 	if(field->blank_object.clicked > 0)
 	{
 		float cursor_x_mm = (float)input->width_pixel / (float)context->screen_resolution_x * (float)context->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
@@ -1451,7 +1451,7 @@ nhgui_object_input_field_float(
 	}
 
 	/* Find where the cursor should be placed */
-	struct nhgui_render_attribute cursor_attribute = 
+	struct rl_gui_render_attribute cursor_attribute = 
 	{
 		.width_mm = attribute->height_mm,
 		.height_mm = attribute->height_mm,
@@ -1484,7 +1484,7 @@ nhgui_object_input_field_float(
 	if(field->blank_object.selected > 0)
 	{	
 		/* This is cursor placed behind the text */
-		nhgui_icon_text_cursor(
+		rl_gui_icon_text_cursor(
 				context,
 				&cursor_attribute,
 				input,
@@ -1492,7 +1492,7 @@ nhgui_object_input_field_float(
 		);
 	}
 
-	struct nhgui_render_attribute font_attribute = 
+	struct rl_gui_render_attribute font_attribute = 
 	{
 		.height_mm = attribute->height_mm,
 		.r = 1.0f,	
@@ -1501,7 +1501,7 @@ nhgui_object_input_field_float(
 	};
 
 
-	nhgui_object_font_text(
+	rl_gui_object_font_text(
 			context, 
 			font, 
 			&input_buffer[overflow_count],
@@ -1514,10 +1514,10 @@ nhgui_object_input_field_float(
 }
 
 int 
-nhgui_object_font_freetype_characters_initialize(
-		const struct nhgui_context *context,
-		const struct nhgui_render_attribute *attribute,
-	       	struct nhgui_object_font *font,
+rl_gui_object_font_freetype_characters_initialize(
+		const struct rl_gui_context *context,
+		const struct rl_gui_render_attribute *attribute,
+	       	struct rl_gui_object_font *font,
 	       	const char *filename
 )
 {
@@ -1580,7 +1580,7 @@ nhgui_object_font_freetype_characters_initialize(
 	FT_Done_Face(face);
 
 	const char text[] = "abcdefghlm";
-	font->delta_y_max = nhgui_object_font_text_delta_y_max(
+	font->delta_y_max = rl_gui_object_font_text_delta_y_max(
 			context,
 			font,
 			attribute,
@@ -1594,8 +1594,8 @@ nhgui_object_font_freetype_characters_initialize(
 }
 
 void 
-nhgui_object_font_freetype_characters_deinitialize(
-	       	struct nhgui_object_font *font
+rl_gui_object_font_freetype_characters_deinitialize(
+	       	struct rl_gui_object_font *font
 )
 {
 	for(uint32_t i = 0; i < 128; i++)
@@ -1605,13 +1605,13 @@ nhgui_object_font_freetype_characters_deinitialize(
 }
 
 void
-nhgui_object_font_text_deinitialize(struct nhgui_object_font_text_instance *instance)
+rl_gui_object_font_text_deinitialize(struct rl_gui_object_font_text_instance *instance)
 {
 	glDeleteProgram(instance->program);
 }
 
 int 
-nhgui_object_font_text_initialize(struct nhgui_object_font_text_instance *instance)
+rl_gui_object_font_text_initialize(struct rl_gui_object_font_text_instance *instance)
 {
 	uint8_t vertex_source[] = 
 				"#version 430 core \n "
@@ -1636,18 +1636,18 @@ nhgui_object_font_text_initialize(struct nhgui_object_font_text_instance *instan
 				"	fcolor = vec4(color, 1.0) * s;	\n"
 				"}			\n";	
 
-	instance->program = nhgui_shader_vertex_create_from_memory(
+	instance->program = rl_gui_shader_vertex_create_from_memory(
 			vertex_source, sizeof(vertex_source), 
 			fragment_source, sizeof(fragment_source)
 	);	
 	
 	if(instance->program == 0)
 	{
-		fprintf(stderr, "nhgui_shader_vertex_create_from_file() failed. \n");
+		fprintf(stderr, "rl_gui_shader_vertex_create_from_file() failed. \n");
 		return -1;	
 	}
 	
-	int result = nhgui_common_uniform_locations_find(
+	int result = rl_gui_common_uniform_locations_find(
 			&instance->locations, 
 			instance->program
 	);
@@ -1655,7 +1655,7 @@ nhgui_object_font_text_initialize(struct nhgui_object_font_text_instance *instan
 	if(result < 0){
 		glDeleteProgram(instance->program);
 		
-		fprintf(stderr, "nhgui_common_uniform_locations_find() failed. \n");
+		fprintf(stderr, "rl_gui_common_uniform_locations_find() failed. \n");
 		return -1;
 	}
 
@@ -1663,12 +1663,12 @@ nhgui_object_font_text_initialize(struct nhgui_object_font_text_instance *instan
 }
 
 
-struct nhgui_result
-nhgui_object_font_text_result_centered_by_previous_x(
-		const struct nhgui_result result,
-		const struct nhgui_context *context, 
-		const struct nhgui_object_font *font,
-		const struct nhgui_render_attribute *attribute,
+struct rl_gui_result
+rl_gui_object_font_text_result_centered_by_previous_x(
+		const struct rl_gui_result result,
+		const struct rl_gui_context *context, 
+		const struct rl_gui_object_font *font,
+		const struct rl_gui_render_attribute *attribute,
 		const char *text,
 		const uint32_t text_length
 )
@@ -1686,17 +1686,17 @@ nhgui_object_font_text_result_centered_by_previous_x(
 		if(i != text_length-1)
 			x_mm += (font->character[c].advance_x >> 6) * mm_per_pixel_x;
 	}
-	struct nhgui_result r = result;
+	struct rl_gui_result r = result;
 	r.x_mm += result.x_inc_next/2 - x_mm/2;
 	return r;
 }
 
 
 float 
-nhgui_object_font_text_delta_y_max(
-		const struct nhgui_context *context, 
-		const struct nhgui_object_font *font,
-		const struct nhgui_render_attribute *attribute,
+rl_gui_object_font_text_delta_y_max(
+		const struct rl_gui_context *context, 
+		const struct rl_gui_object_font *font,
+		const struct rl_gui_render_attribute *attribute,
 		const char *text, 
 		const uint32_t text_length
 )
@@ -1716,22 +1716,22 @@ nhgui_object_font_text_delta_y_max(
 	return delta_y_max;
 }
 
-struct nhgui_result
-nhgui_object_font_text(
-		const struct nhgui_context *context, 
-		const struct nhgui_object_font *font,
+struct rl_gui_result
+rl_gui_object_font_text(
+		const struct rl_gui_context *context, 
+		const struct rl_gui_object_font *font,
 		const char *text, 
 		const uint32_t text_length, 
-		const struct nhgui_render_attribute *attribute,
-		const struct nhgui_input *input, 
-		const struct nhgui_result result
+		const struct rl_gui_render_attribute *attribute,
+		const struct rl_gui_input *input, 
+		const struct rl_gui_result result
 )
 {
 	/* Calculate the maximum delta in y such that the text can be centered in
 	 * the rendering loop.
 	 **/	
 
-	const struct nhgui_object_font_text_instance *instance = &context->font;
+	const struct rl_gui_object_font_text_instance *instance = &context->font;
 
 	float ratio = attribute->height_mm/font->height_mm;
 
@@ -1741,8 +1741,8 @@ nhgui_object_font_text(
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glUseProgram(instance->program);
 
-	struct nhgui_result render_result = result;
-	struct nhgui_result r = result;
+	struct rl_gui_result render_result = result;
+	struct rl_gui_result r = result;
 
 	for(uint32_t i = 0; i < text_length; i++)
 	{	
@@ -1755,11 +1755,11 @@ nhgui_object_font_text(
 		float width_mm = (float)font->character[c].width * mm_per_pixel_x;
 		float height_mm = (float)font->character[c].height * mm_per_pixel_y;
 		
-		struct nhgui_result result_tmp = result;	
+		struct rl_gui_result result_tmp = result;	
 		result_tmp.x_mm = r.x_mm + font->character[c].bearing_x * mm_per_pixel_x;
 		result_tmp.y_mm = r.y_mm - (font->character[c].height - font->character[c].bearing_y) * mm_per_pixel_y - delta_y_max; 
 
-		nhgui_common_uniform_locations_set(
+		rl_gui_common_uniform_locations_set(
 				&instance->locations,
 			       	context, input, result_tmp, 
 				width_mm, height_mm,
@@ -1771,7 +1771,7 @@ nhgui_object_font_text(
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, font->character[c].texture);
 
-		nhgui_surface_render(&context->surface);
+		rl_gui_surface_render(&context->surface);
 	}
 
 	render_result.x_inc_next = r.x_mm;
@@ -1782,26 +1782,26 @@ nhgui_object_font_text(
 	return render_result;
 }
 
-struct nhgui_result 
-nhgui_object_font_text_area(
-		const struct nhgui_object_font_text_area *area,
-		const struct nhgui_context *context,
-		const struct nhgui_object_font *font,
-		const struct nhgui_render_attribute *attribute,
-		const struct nhgui_input *input, 
-		const struct nhgui_result result,
+struct rl_gui_result 
+rl_gui_object_font_text_area(
+		const struct rl_gui_object_font_text_area *area,
+		const struct rl_gui_context *context,
+		const struct rl_gui_object_font *font,
+		const struct rl_gui_render_attribute *attribute,
+		const struct rl_gui_input *input, 
+		const struct rl_gui_result result,
 		const char *input_buffer, 
 		const uint32_t input_buffer_size
 )
 
 {
-	struct nhgui_result background_result = result; 
+	struct rl_gui_result background_result = result; 
 	uint32_t curr_char = 0;
 
 	while(curr_char < input_buffer_size)
 	{
 			
-		struct nhgui_render_attribute blank_attribute = 
+		struct rl_gui_render_attribute blank_attribute = 
 		{
 			.width_mm = attribute->width_mm,
 			.height_mm = attribute->height_mm,	
@@ -1811,7 +1811,7 @@ nhgui_object_font_text_area(
 		};
 
 		/* Background of the input field. */
-		background_result = nhgui_icon_blank_no_object(
+		background_result = rl_gui_icon_blank_no_object(
 				context,
 				&blank_attribute,
 				input,
@@ -1852,7 +1852,7 @@ nhgui_object_font_text_area(
 		}
 		
 	
-		struct nhgui_render_attribute font_attribute = 
+		struct rl_gui_render_attribute font_attribute = 
 		{
 			.height_mm = attribute->height_mm,	
 			.r = area->font_color.x,
@@ -1861,7 +1861,7 @@ nhgui_object_font_text_area(
 		};
 
 
-		nhgui_object_font_text(
+		rl_gui_object_font_text(
 			context, 
 			font, 
 			&input_buffer[curr_char],
@@ -1873,7 +1873,7 @@ nhgui_object_font_text_area(
 
 		curr_char += char_within;
 
-		background_result = nhgui_result_dec_y(background_result);
+		background_result = rl_gui_result_dec_y(background_result);
 	
 	}
 
@@ -1883,17 +1883,17 @@ nhgui_object_font_text_area(
 
 
 
-struct nhgui_result
-nhgui_object_radio_button(
-	       	struct nhgui_object_radio_button *object,
-		const struct nhgui_context *context,
-	       	const struct nhgui_render_attribute *attribute,
-	       	const struct nhgui_input *input,
-	       	const struct nhgui_result result
+struct rl_gui_result
+rl_gui_object_radio_button(
+	       	struct rl_gui_object_radio_button *object,
+		const struct rl_gui_context *context,
+	       	const struct rl_gui_render_attribute *attribute,
+	       	const struct rl_gui_input *input,
+	       	const struct rl_gui_result result
 )
 {	
 
-	const struct nhgui_object_radio_button_instance *instance = &context->radio_button;
+	const struct rl_gui_object_radio_button_instance *instance = &context->radio_button;
 	/* Calculate coordinates of the cursor in mm.
 	 * First crate a scale relative to how large the application window is in comparison to the scrren size 
 	 * then calculate pixels per mm  and mutiply by cursor position.
@@ -1902,7 +1902,7 @@ nhgui_object_radio_button(
 	float cursor_x_mm = (float)input->width_pixel / (float)context->screen_resolution_x * (float)context->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
 	float cursor_y_mm = (float)input->height_pixel / (float)context->screen_resolution_y * (float)context->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
 
-	struct nhgui_result result_tmp = result;
+	struct rl_gui_result result_tmp = result;
 	result_tmp.y_mm -= attribute->height_mm;
 	
 	/* It is a radio button. Calcaute distance from center to know if the mouse is over it */	
@@ -1924,7 +1924,7 @@ nhgui_object_radio_button(
 	
 	glUniform1ui(instance->location_checked, object->checked);	
 
-	nhgui_common_uniform_locations_set(
+	rl_gui_common_uniform_locations_set(
 			&instance->locations,
 		       	context,
 		       	input,
@@ -1934,9 +1934,9 @@ nhgui_object_radio_button(
 	);
 
 
-	nhgui_surface_render(&context->surface);
+	rl_gui_surface_render(&context->surface);
 
-	struct nhgui_result r = result;
+	struct rl_gui_result r = result;
 	r.y_inc_next = attribute->height_mm;
 	r.x_inc_next = attribute->height_mm;
 
@@ -1944,7 +1944,7 @@ nhgui_object_radio_button(
 	return r;
 }
 
-int nhgui_object_radio_button_initialize(struct nhgui_object_radio_button_instance *instance)
+int rl_gui_object_radio_button_initialize(struct rl_gui_object_radio_button_instance *instance)
 {
 	uint8_t vertex_source[] = 
 				"#version 430 core \n "
@@ -1988,14 +1988,14 @@ int nhgui_object_radio_button_initialize(struct nhgui_object_radio_button_instan
 				"}			\n";	
 	
 	
-	GLuint program = nhgui_shader_vertex_create_from_memory(
+	GLuint program = rl_gui_shader_vertex_create_from_memory(
 			vertex_source, sizeof(vertex_source), 
 			fragment_source, sizeof(fragment_source)
 	);
 
 	if(program == 0)
 	{
-		fprintf(stderr, "nhgui_shader_vertex_create_from_memory() failed. \n");
+		fprintf(stderr, "rl_gui_shader_vertex_create_from_memory() failed. \n");
 		return -1;	
 	
 	}
@@ -2005,11 +2005,11 @@ int nhgui_object_radio_button_initialize(struct nhgui_object_radio_button_instan
 	instance->shader_program = program;
 
 
-	int result = nhgui_common_uniform_locations_find(&instance->locations, instance->shader_program);
+	int result = rl_gui_common_uniform_locations_find(&instance->locations, instance->shader_program);
 	if(result < 0){
 		glDeleteProgram(instance->shader_program);
 
-		fprintf(stderr, "nhgui_common_uniform_locations_find() failed. \n");
+		fprintf(stderr, "rl_gui_common_uniform_locations_find() failed. \n");
 		return -1;
 	}
 
@@ -2027,7 +2027,7 @@ int nhgui_object_radio_button_initialize(struct nhgui_object_radio_button_instan
 	return 0;
 }
 
-void nhgui_object_radio_button_deinitialize(struct nhgui_object_radio_button_instance *instance)
+void rl_gui_object_radio_button_deinitialize(struct rl_gui_object_radio_button_instance *instance)
 {
 	if(instance->initialized > 0)
 	{
@@ -2037,11 +2037,11 @@ void nhgui_object_radio_button_deinitialize(struct nhgui_object_radio_button_ins
 }
 
 int32_t 
-nhgui_input_buffer(
+rl_gui_input_buffer(
 	char *input_buffer, 
 	uint32_t *input_buffer_length,
 	uint32_t input_buffer_size, 
-	struct nhgui_input *input, 
+	struct rl_gui_input *input, 
 	uint32_t *input_index
 )
 {

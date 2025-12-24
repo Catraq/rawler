@@ -1,4 +1,4 @@
-#include "nhgui_glfw.h"
+#include "rl_gui_glfw.h"
 
 
 
@@ -6,7 +6,7 @@
 uint32_t character_callback_buffer_index = 0;
 char character_callback_buffer[NHGUI_INPUT_MAX];
 
-void nhgui_glfw_char_callback(GLFWwindow *window, unsigned int codepoint)
+void rl_gui_glfw_char_callback(GLFWwindow *window, unsigned int codepoint)
 {
 	if(codepoint > 30 && codepoint < 127){
 		if(character_callback_buffer_index < NHGUI_INPUT_MAX)
@@ -28,10 +28,10 @@ character_callback_erase_buffer()
 	character_callback_buffer_index = 0;
 }
 
-struct nhgui_glfw_frame
-nhgui_frame_create(GLFWwindow *window)
+struct rl_gui_glfw_frame
+rl_gui_frame_create(GLFWwindow *window)
 {
-	struct nhgui_glfw_frame frame = {};
+	struct rl_gui_glfw_frame frame = {};
 
 	frame.backspace_key_last = GLFW_RELEASE;
 	frame.mouse_button_last = GLFW_RELEASE;	
@@ -51,13 +51,13 @@ nhgui_frame_create(GLFWwindow *window)
 }
 
 void 
-nhgui_glfw_frame_end(struct nhgui_glfw_frame *frame, struct nhgui_input *input)
+rl_gui_glfw_frame_end(struct rl_gui_glfw_frame *frame, struct rl_gui_input *input)
 {
 	frame->input_selected_new = input->selected_new_raise;
 }
 
-struct nhgui_input 
-nhgui_glfw_frame_begin(struct nhgui_glfw_frame *frame, GLFWwindow *window)
+struct rl_gui_input 
+rl_gui_glfw_frame_begin(struct rl_gui_glfw_frame *frame, GLFWwindow *window)
 {
 
 	struct timeval time_curr_tmp;
@@ -91,7 +91,7 @@ nhgui_glfw_frame_begin(struct nhgui_glfw_frame *frame, GLFWwindow *window)
 
 	frame->mouse_button_last = mouse_button;
 	
-	struct nhgui_input input = {
+	struct rl_gui_input input = {
 		.width_pixel = width,
 		.height_pixel = height,
 		.cursor_x_pixel = (uint32_t)x_cursor,

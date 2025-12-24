@@ -7,9 +7,9 @@ include_directories("${PROJECT_SOURCE_DIR}/src/")
 include_directories("${PROJECT_SOURCE_DIR}/include/")
 
 set(SOURCES 
-	"${PROJECT_SOURCE_DIR}/src/nhgui.c"
-	"${PROJECT_SOURCE_DIR}/src/nhgui_glfw.c"
-	"${PROJECT_SOURCE_DIR}/src/nhgui_error.c"
+	"${PROJECT_SOURCE_DIR}/src/rl_gui.c"
+	"${PROJECT_SOURCE_DIR}/src/rl_gui_glfw.c"
+	"${PROJECT_SOURCE_DIR}/src/rl_gui_error.c"
 )
 
 add_library(nhgui SHARED ${SOURCES})

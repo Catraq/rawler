@@ -1,5 +1,5 @@
-#ifndef NHGUI_ERROR_H
-#define NHGUI_ERROR_H 
+#ifndef RL_GUI_ERROR_H
+#define RL_GUI_ERROR_H 
 
 #define S1(x) #x
 #define S2(x) S1(x)
@@ -11,8 +11,8 @@
 #include <stdio.h>
 
 
-void nhgui_gl_error(const char *msg);
+void rl_gui_gl_error(const char *msg);
 
-#define CHECK_GL_ERROR() nhgui_gl_error(LOCATION)
+#define CHECK_GL_ERROR() rl_gui_gl_error(LOCATION)
 
 #endif 

@@ -1,5 +1,5 @@
-#ifndef NHGUI_GLFW_H
-#define NHGUI_GLFW_H
+#ifndef RL_GUI_GLFW_H
+#define RL_GUI_GLFW_H
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -9,11 +9,11 @@
 
 #include <sys/time.h>
 
-#include  "nhgui.h"
+#include  "rl_gui.h"
 
 #define GLFW_CHARACTER_CALLBACK_BUFFER_SIZE 32 
 
-struct nhgui_glfw_frame 
+struct rl_gui_glfw_frame 
 {
 	float prev_cursor_x;
 	float prev_cursor_y;
@@ -28,19 +28,19 @@ struct nhgui_glfw_frame
 
 
 /* Used for creating frame in before it is used in the main loop */
-struct nhgui_glfw_frame
-nhgui_frame_create(GLFWwindow *window);
+struct rl_gui_glfw_frame
+rl_gui_frame_create(GLFWwindow *window);
 
 /* Placed in the end of the rendering loop. */
 void 
-nhgui_glfw_frame_end(struct nhgui_glfw_frame *frame, struct nhgui_input *input);
+rl_gui_glfw_frame_end(struct rl_gui_glfw_frame *frame, struct rl_gui_input *input);
 
 /* Placed in the beginning of the rendering loop. */
-struct nhgui_input 
-nhgui_glfw_frame_begin(struct nhgui_glfw_frame *frame, GLFWwindow *window);
+struct rl_gui_input 
+rl_gui_glfw_frame_begin(struct rl_gui_glfw_frame *frame, GLFWwindow *window);
 
 /* Callback that should be used by glfw */
 void 
-nhgui_glfw_char_callback(GLFWwindow *window, unsigned int codepoint);
+rl_gui_glfw_char_callback(GLFWwindow *window, unsigned int codepoint);
 
 #endif 
