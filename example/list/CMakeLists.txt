@@ -6,5 +6,5 @@ add_executable(${TEMPLATE} main.c)
  
 set_property(TARGET ${TEMPLATE} PROPERTY C_STANDARD 11)
 
-target_link_libraries(${TEMPLATE} nhgui)
+target_link_libraries(${TEMPLATE} rl_gui)
 
