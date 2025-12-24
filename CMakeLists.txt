@@ -15,25 +15,25 @@ set(SOURCES
 add_library(rl_gui SHARED ${SOURCES})
 
 find_package(GLEW REQUIRED)
-target_include_directories(nhgui PUBLIC ${GLEW_INCLUDE_DIRS})
+target_include_directories(rl_gui PUBLIC ${GLEW_INCLUDE_DIRS})
 
 set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
-target_include_directories(nhgui PUBLIC ${OpenGL_INCLUDE_DIR})
+target_include_directories(rl_gui PUBLIC ${OpenGL_INCLUDE_DIR})
 
 find_package(glfw3 3.0 REQUIRED)
 
 find_package(Freetype REQUIRED)
-target_include_directories(nhgui PUBLIC ${FREETYPE_INCLUDE_DIRS})
+target_include_directories(rl_gui PUBLIC ${FREETYPE_INCLUDE_DIRS})
 
 #Dependencies library 
-target_link_libraries(nhgui PUBLIC m)
-target_link_libraries(nhgui PUBLIC ${GLEW_LIBRARIES})
-target_link_libraries(nhgui PUBLIC glfw)
-target_link_libraries(nhgui PUBLIC ${OPENGL_LIBRARIES})
-target_link_libraries(nhgui PUBLIC ${FREETYPE_LIBRARIES})
+target_link_libraries(rl_gui PUBLIC m)
+target_link_libraries(rl_gui PUBLIC ${GLEW_LIBRARIES})
+target_link_libraries(rl_gui PUBLIC glfw)
+target_link_libraries(rl_gui PUBLIC ${OPENGL_LIBRARIES})
+target_link_libraries(rl_gui PUBLIC ${FREETYPE_LIBRARIES})
 
-target_include_directories(nhgui PUBLIC "include/")
+target_include_directories(rl_gui PUBLIC "include/")
 
 
 
