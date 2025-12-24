@@ -6,7 +6,6 @@
 #include "math/vec.h"
 #include "nhgui_glfw.h"
 #include "nhgui.h"
-#include "nhgui_list.h"
 
 
 #define ADD_BUFFER_SIZE 50
@@ -31,8 +30,6 @@ struct input_list_example
 	struct nhgui_object_input_field add_field;
 	struct nhgui_object_text_list list_object;
 	struct nhgui_object_font_text_area text_area;
-
-	struct nhgui_window nhwindow;
 };
 
 void 
@@ -58,14 +55,6 @@ input_list_example_initialize(
 		.font_color = {.x=1.0, .y=1.0, .z=1.0},
 	};
 
-	
-	example->nhwindow.scroll_bar_attribute = (struct nhgui_render_attribute){
-		.width_mm = 3,
-		.height_mm = 10,
-		.r = 1.0
-	};
-
-
 }
 
 struct nhgui_result
@@ -83,25 +72,6 @@ input_list_example(
 	};
 
 
-	struct nhgui_render_attribute window_attribute = 
-	{
-		.width_mm = 80,
-		.height_mm = 50,
-	};
-
-	
-	result = nhgui_window_begin(
-			&example->nhwindow,
-			context,
-			&window_attribute,
-			input,
-			result	
-	);
-
-
-	
-	struct nhgui_result input_res = nhgui_result_margin(result, 1, 1);
-	
 	struct nhgui_render_attribute input_field_attribute = {
 		.height_mm = 3,
 		.width_mm = 30,			
@@ -113,7 +83,7 @@ input_list_example(
 			font,
 			&input_field_attribute ,
 			input, 
-			input_res,
+			result,
 			example->add_buffer, 
 			&example->add_buffer_length,
 			ADD_BUFFER_SIZE
@@ -175,7 +145,7 @@ input_list_example(
 
 			memcpy(example->add_text_buffer[free_index], example->add_buffer, ADD_BUFFER_SIZE);	
 			example->add_text_buffer_length[free_index] = example->add_buffer_length;
-			example->add_text_buffer_ptr[free_index] = &example->add_text_buffer[free_index];
+			example->add_text_buffer_ptr[free_index] = (char *)&example->add_text_buffer[free_index];
 
 			example->add_buffer_length = 0;
 		}
@@ -189,7 +159,7 @@ input_list_example(
 
 
 	res = nhgui_result_dec_y(res);	
-	res = nhgui_result_rewind_x_to(res, input_res);
+	res = nhgui_result_rewind_x_to(res, result);
 
 	struct nhgui_render_attribute input_list_attribute = {
 		.height_mm = 3,
@@ -199,7 +169,7 @@ input_list_example(
 	struct nhgui_result text_list_result = nhgui_object_text_list(
 			&example->list_object,
 			context, 
-			example->add_text_buffer_ptr,
+			(const char **)example->add_text_buffer_ptr,
 			example->add_text_buffer_length,
 			ADD_TEXT_COUNT, 
 			font, 
@@ -260,8 +230,6 @@ input_list_example(
 			}
 		}
 	}
-	text_list_result.x_max_mm = text_list_result.x_max_mm < res.x_max_mm ? res.x_max_mm : text_list_result.x_max_mm;
-	text_list_result.y_min_mm = text_list_result.y_min_mm < res.y_min_mm ? text_list_result.y_min_mm : res.y_min_mm; 
 	
 
 	res = nhgui_result_dec_y(text_list_result);
@@ -293,16 +261,7 @@ input_list_example(
 
 	res = nhgui_result_dec_y(res);
 	
-
-	return nhgui_window_end(
-			&example->nhwindow,
-			context,
-			&window_attribute,
-			input,
-			res	
-	);
-
-
+	return res;
 }
 
 
@@ -407,20 +366,10 @@ int main(int args, char *argv[])
 	
 	}
 
-	
-
-
-
 
 	struct input_list_example example_1 = {};
-	struct input_list_example example_2 = {};
-	struct input_list_example example_3 = {};
-	struct input_list_example example_4 = {};
 
 	input_list_example_initialize(&example_1);
-	input_list_example_initialize(&example_2);
-	input_list_example_initialize(&example_3);
-	input_list_example_initialize(&example_4);
 
 	struct nhgui_glfw_frame frame = nhgui_frame_create(window);
 
@@ -442,54 +391,15 @@ int main(int args, char *argv[])
 
 		struct nhgui_result result = {
 			.y_mm = context.screen_height_mm * (float)input.height_pixel/(float)context.screen_resolution_y,
-			.y_min_mm = context.screen_height_mm * (float)input.height_pixel/(float)context.screen_resolution_x
 		};
 		
-		/* Top left */
-	       	struct nhgui_result result_top_left = input_list_example(
+	       	input_list_example(
 			&example_1,
 			&context,
 			&input,	
 			&font,
 			result
 		);
-
-		/* Bottom left */
-		result = nhgui_result_dec_y(result_top_left);
-		result = input_list_example(
-			&example_2,
-			&context,
-			&input,	
-			&font,
-			result
-		);
-
-		/* Top right */
-		result = nhgui_result_inc_x(result_top_left);
-		result = input_list_example(
-			&example_3,
-			&context,
-			&input,	
-			&font,
-			result
-		);
-
-		/* Top right */
-		result = nhgui_result_dec_y(result);
-		result = input_list_example(
-			&example_4,
-			&context,
-			&input,	
-			&font,
-			result
-		);
-
-
-
-
-
-
-
 
 
 

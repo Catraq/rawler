@@ -7,9 +7,7 @@ include_directories("${PROJECT_SOURCE_DIR}/src/")
 include_directories("${PROJECT_SOURCE_DIR}/include/")
 
 set(SOURCES 
-	"${PROJECT_SOURCE_DIR}/src/misc/file.c"
 	"${PROJECT_SOURCE_DIR}/src/nhgui.c"
-	"${PROJECT_SOURCE_DIR}/src/nhgui_list.c"
 	"${PROJECT_SOURCE_DIR}/src/nhgui_glfw.c"
 	"${PROJECT_SOURCE_DIR}/src/nhgui_error.c"
 )
@@ -42,5 +40,6 @@ target_include_directories(nhgui PUBLIC "include/")
 
 add_subdirectory(example/list)
 add_subdirectory(example/simple)
+add_subdirectory(example/scroll)
 
 

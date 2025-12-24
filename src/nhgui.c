@@ -115,6 +115,7 @@ nhgui_context_deinitialize(
 int
 nhgui_common_uniform_locations_find(struct nhgui_common_uniform_locations *locations, const GLuint program)
 {
+	/* Common OpenGL uniform location finding */
 	const char *position_uniform_str = "position";
 	GLint position_location = glGetUniformLocation(program, position_uniform_str);
 	if(position_location == -1)
@@ -178,6 +179,7 @@ nhgui_common_uniform_locations_set(
 	p_y = 2.0*p_y-1.0;
 	p_x = 2.0*p_x-1.0;
 	
+		
 	if(locations->position != -1){	
 		glUniform2f(locations->position, p_x, p_y);
 		CHECK_GL_ERROR();
@@ -244,6 +246,172 @@ nhgui_result_rewind_x_to(struct nhgui_result result, struct nhgui_result to)
 	result.x_inc_next = 0;
 	return result;
 }
+
+
+
+
+
+struct nhgui_result
+nhgui_object_text_list(
+		struct nhgui_object_text_list *list,
+		const struct nhgui_context *context,
+		const char *entry[],
+		const uint32_t *entry_length,
+		const uint32_t entry_count,
+		const struct nhgui_object_font *font,
+		const struct nhgui_render_attribute *attribute,
+		struct nhgui_input *input, 
+		const struct nhgui_result result
+
+)
+{
+
+	float cursor_x_mm = (float)input->width_pixel / (float)context->screen_resolution_x * (float)context->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
+	float cursor_y_mm = (float)input->height_pixel / (float)context->screen_resolution_y * (float)context->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
+
+
+	struct nhgui_result r = result;	
+	for(uint32_t i = 0; i < entry_count; i++)
+	{
+		
+		struct nhgui_result result_tmp = r;
+		result_tmp.y_mm -= attribute->height_mm;
+		
+		if(input->cursor_button_left > 0)
+		{	
+			if(cursor_x_mm > result_tmp.x_mm && cursor_x_mm < result_tmp.x_mm + attribute->width_mm 
+			&& cursor_y_mm > result_tmp.y_mm && cursor_y_mm < result_tmp.y_mm + attribute->height_mm)
+			{
+				if(list->selected_index == i)
+					list->selected = list->selected ? 0 : 1;
+				else
+					list->selected = 1;
+
+
+				list->selected_index = i;
+
+				if(list->selected > 0)
+				{
+					input->selected_new_raise = 1;	
+				}	
+			}	
+		}
+
+		if(list->selected > 0 && list->selected_index == i)
+		{
+		
+			struct nhgui_render_attribute selected_attribute = {
+				.height_mm = attribute->height_mm,
+				.width_mm = attribute->width_mm,
+				.r = list->selected_field_color.x,
+				.g = list->selected_field_color.y,
+				.b = list->selected_field_color.z,
+			};
+
+			r = nhgui_icon_blank_no_object(
+					context,
+					&selected_attribute,
+					input,
+					r	
+			);
+			
+			list->selected_result = r;
+
+			uint32_t overflow_count_index = 0;
+			uint32_t overflow_count = nhgui_object_font_text_overflow_count(
+				r,	
+				context,
+				font,
+				attribute,
+				entry[i],
+				entry_length[i]
+			);
+			
+			
+			if(overflow_count > 0 && list->char_scroll_per_sec > 0)
+			{
+				uint32_t s = input->time_sec/list->char_scroll_per_sec;
+				overflow_count_index = s%overflow_count;
+			}
+
+			struct nhgui_render_attribute selected_font_attribute = *attribute;
+			selected_font_attribute.r = list->selected_text_color.x;
+			selected_font_attribute.g = list->selected_text_color.y;
+			selected_font_attribute.b = list->selected_text_color.z;
+
+			nhgui_object_font_text(
+					context, 
+					font, 
+					&entry[i][overflow_count_index],
+					entry_length[i] - overflow_count,
+					&selected_font_attribute,
+					input, 
+					r	
+			);
+		}
+		else
+		{
+
+			struct nhgui_render_attribute _attribute = {
+				.height_mm = attribute->height_mm,	
+				.width_mm = attribute->width_mm,
+				.r = list->field_color.x,
+				.g = list->field_color.y,
+				.b = list->field_color.z,
+			};
+
+
+			r = nhgui_icon_blank_no_object(
+					context,
+					&_attribute,
+					input,
+					r	
+			);
+
+
+			uint32_t overflow_count_index = 0;
+			uint32_t overflow_count = nhgui_object_font_text_overflow_count(
+				r,	
+				context,
+				font,
+				attribute,
+				entry[i],
+				entry_length[i]
+			);
+
+			if(overflow_count > 0 && list->char_scroll_per_sec > 0)
+			{
+				uint32_t s = input->time_sec/list->char_scroll_per_sec;
+				overflow_count_index = (overflow_count + s)%overflow_count;
+			}
+
+			struct nhgui_render_attribute font_attribute = *attribute;
+			font_attribute.r = list->text_color.x;
+			font_attribute.g = list->text_color.y;
+			font_attribute.b = list->text_color.z;
+
+			nhgui_object_font_text(
+					context, 
+					font, 
+					&entry[i][overflow_count_index],
+					entry_length[i] - overflow_count,
+					&font_attribute,
+					input, 
+					r	
+			);
+
+
+		}
+
+		if(i != entry_count - 1)
+			r = nhgui_result_dec_y(r);
+
+	}
+
+	return r;
+}
+
+
 
 GLuint nhgui_shader_vertex_create_from_memory(
 		uint8_t *vertex_source, uint32_t vertex_length, 
@@ -385,7 +553,7 @@ const GLuint nhgui_surface_quad_indices_count = sizeof(nhgui_surface_quad_indice
 
 int nhgui_surface_initialize(struct nhgui_surface *surface)
 {
-
+	/* Setup OpenGL buffers and vertex arrays for drawing a quad */
 	GLuint nhgui_surface_vertex_array, nhgui_surface_vertex_buffer, nhgui_surface_element_buffer;
 
 	glGenVertexArrays(1, &nhgui_surface_vertex_array);
@@ -478,8 +646,6 @@ nhgui_icon_blank_no_object(
 	r.y_inc_next = attribute->height_mm;
 	r.x_inc_next = attribute->width_mm;
 
-	r.y_min_mm = r.y_min_mm < r.y_mm - r.y_inc_next ? r.y_min_mm : r.y_mm - r.y_inc_next;
-	r.x_max_mm = r.x_max_mm < r.x_mm + r.x_inc_next ? r.x_mm + r.x_inc_next : r.x_max_mm;
 
 	return r;
 }
@@ -502,6 +668,8 @@ nhgui_icon_blank(
 	result_tmp.y_mm -= attribute->height_mm;
 	
 	blank->clicked = 0;
+
+	/* Set state depending on if the area was clicked or pressed */
 	if(input->cursor_button_left > 0)
 	{
 		if(cursor_x_mm > result_tmp.x_mm && cursor_x_mm < result_tmp.x_mm + attribute->width_mm 
@@ -528,16 +696,18 @@ nhgui_icon_blank(
 
 	blank->deselected = 0;
 
-
+	/* if this was selected previous iteration, untoggle selected previous iteration */
 	if(blank->selected_prev > 0)
 	{
 		blank->selected_prev = 0;
 	}
+	/* If a new was selected and it was not this, deselect this */
 	else if(input->selected_new > 0)
 	{
 		blank->deselected = 1;
 		blank->selected = 0;	
 	}	
+	/* If this is newly selected, raise flag too */
 	else if(input->cursor_button_left > 0)
 	{
 		if(cursor_x_mm > result_tmp.x_mm && cursor_x_mm < result_tmp.x_mm + attribute->width_mm 
@@ -567,10 +737,6 @@ nhgui_icon_blank(
 	struct nhgui_result r = result;
 	r.y_inc_next = attribute->height_mm;
 	r.x_inc_next = attribute->width_mm;
-
-	r.y_min_mm = r.y_min_mm < r.y_mm - r.y_inc_next ? r.y_min_mm : r.y_mm - r.y_inc_next;
-	r.x_max_mm = r.x_max_mm < r.x_mm + r.x_inc_next ? r.x_mm + r.x_inc_next : r.x_max_mm;
-
 
 	return r;
 }
@@ -871,221 +1037,6 @@ nhgui_object_font_text_overflow_count(
 	return overflow_count;
 }
 	
-struct nhgui_result
-nhgui_object_scroll_bar_scroll_result(
-		const struct nhgui_object_scroll_bar *bar,
-		const struct nhgui_result result
-)
-{
-	struct nhgui_result r = result;
-	r.y_offset_mm += bar->scroll_y_mm;
-	r.x_offset_mm -= bar->scroll_x_mm;
-	return r;
-}
-
-void
-nhgui_object_scroll_bar(
-		struct nhgui_object_scroll_bar *bar,
-		const struct nhgui_context *context,
-		const struct nhgui_render_attribute *scroll_attribute,
-		const struct nhgui_render_attribute *size_attribute,
-		struct nhgui_input *input, 
-		const struct nhgui_result scroll_result,	
-		const struct nhgui_result result	
-)
-{
-
-	/* Compute the overflow in x and y direction and the % of overflow 
-	 * compared to the size attribute corresponds to space that can be 
-	 * scrolled.
-	 *
-	 * The y scroll bar consumed space in x direction so the x bar have 
-	 * to be adjusted to be able to scroll past the space consumed by 
-	 * the y scroll bar. 
-	 * */
-	
-	float x_mm_used = 0.0f;
-	float overflow_y_mm = (scroll_result.y_mm -  result.y_min_mm) - size_attribute->height_mm; 
-	if(overflow_y_mm > 0.0f)
-	{	
-		/* Compute % that is overflowing */
-		float y_mm_size = size_attribute->height_mm;
-		float p = (y_mm_size-overflow_y_mm)/(y_mm_size);
-		
-		/* Scale scroll bar with the %. If to small make it height */
-		float scroll_bar_size_mm = y_mm_size * p < scroll_attribute->height_mm ? scroll_attribute->height_mm : y_mm_size * p;
-		struct nhgui_render_attribute blank_scroll_attribute = {
-			.height_mm = scroll_bar_size_mm,
-			.width_mm = scroll_attribute->width_mm,
-			.r = scroll_attribute->r,
-			.g = scroll_attribute->g,
-			.b = scroll_attribute->b
-		};
-		
-		/* size conusmed by the y scroll bar */
-		x_mm_used = blank_scroll_attribute.width_mm;
-		
-		/* Place the scrollbar in the right of the scroll result */	
-		struct nhgui_result scroll_result_y = scroll_result;
-		scroll_result_y.x_mm = scroll_result.x_mm + size_attribute->width_mm - blank_scroll_attribute.width_mm;
-		scroll_result_y.y_mm -= bar->scroll_y_mm;
-
-
-		
-		nhgui_icon_blank(
-				&bar->blank_scroll_y,
-				context, 
-				&blank_scroll_attribute,
-				input, 
-				scroll_result_y
-		);
-
-		if(bar->blank_scroll_y.pressed > 0)
-		{
-			/* Allow moving the scroll bar */	
-			float scroll_area_mm = y_mm_size - scroll_bar_size_mm;
-			float mm_per_pixel = (float)context->screen_height_mm/(float)context->screen_resolution_y;
-			float scroll_in_mm = input->cursor_y_delta_pixel * mm_per_pixel;
-			float max_scroll = bar->scroll_y_mm + scroll_in_mm < scroll_area_mm ? scroll_in_mm : bar->scroll_y_mm + scroll_in_mm - scroll_area_mm;
-			bar->scroll_y_mm = bar->scroll_y_mm-max_scroll > 0 ? bar->scroll_y_mm-max_scroll : 0;
-
-
-		
-		}
-	}
-
-	float x_mm_size = size_attribute->width_mm;
-	float x_overflow_mm = result.x_max_mm + 2*x_mm_used - x_mm_size - scroll_result.x_mm;
-	if(x_overflow_mm > 0.0)
-	{
-		float p = (x_mm_size-x_overflow_mm)/(x_mm_size);
-
-		float scroll_bar_size_mm = x_mm_size * p < scroll_attribute->height_mm ? scroll_attribute->height_mm : x_mm_size * p;
-		struct nhgui_render_attribute blank_scroll_attribute = {
-			.height_mm = scroll_attribute->width_mm,
-			.width_mm = scroll_bar_size_mm,
-			.r = scroll_attribute->r,
-			.g = scroll_attribute->g,
-			.b = scroll_attribute->b
-		};
-
-
-		struct nhgui_result scroll_result_x = {
-			.x_mm = scroll_result.x_mm + bar->scroll_x_mm,
-			.y_mm = scroll_result.y_mm + scroll_attribute->width_mm - size_attribute->height_mm,
-		};
-
-		
-		nhgui_icon_blank(
-				&bar->blank_scroll_x,
-				context, 
-				&blank_scroll_attribute,
-				input, 
-				scroll_result_x	
-		);
-		if(bar->blank_scroll_x.pressed > 0)
-		{
-			float scroll_area_mm = x_mm_size - scroll_bar_size_mm - x_mm_used;
-			float mm_per_pixel = (float)context->screen_width_mm/(float)context->screen_resolution_x;
-			float scroll_in_mm = input->cursor_x_delta_pixel * mm_per_pixel;
-			float max_scroll = bar->scroll_x_mm + scroll_in_mm < 0 ? 0 : scroll_in_mm;
-			bar->scroll_x_mm = bar->scroll_x_mm+max_scroll < scroll_area_mm ? bar->scroll_x_mm+max_scroll : scroll_area_mm;
-		}
-		else
-		{
-			float scroll_area_mm = x_mm_size - scroll_bar_size_mm - x_mm_used;
-			bar->scroll_x_mm = bar->scroll_x_mm < scroll_area_mm ? bar->scroll_x_mm : scroll_area_mm;
-		}
-
-	}
-	else
-	{
-		bar->scroll_x_mm = 0;
-	}
-	
-
-
-}
-
-
-struct nhgui_result
-nhgui_window_begin(
-		struct nhgui_window *window,
-		const struct nhgui_context *context,
-		const struct nhgui_render_attribute *attribute,
-		const struct nhgui_input *input,
-		const struct nhgui_result result
-)
-{
-	/* Store the result such that the window initial positions are known */
-	window->result_begin = result;
-	
-	/* Compute the screen coordinates of the window and only alllow drawing 
-	 * to the pixels within the area using scissor test in opengl. */	
-	float x_pixels_per_mm = (float)context->screen_resolution_x/(float)context->screen_width_mm;
-	float y_pixels_per_mm = (float)context->screen_resolution_y/(float)context->screen_height_mm;
-	
-	uint32_t x = result.x_mm * x_pixels_per_mm;
-	uint32_t y = (result.y_mm - attribute->height_mm)*y_pixels_per_mm < 0 ? 0 : (result.y_mm - attribute->height_mm)*y_pixels_per_mm; 
-	uint32_t height_remove_mm = result.y_mm - attribute->height_mm < 0 ? -(result.y_mm - attribute->height_mm) : 0;
-	uint32_t width = attribute->width_mm * x_pixels_per_mm;
-	uint32_t height = (attribute->height_mm - height_remove_mm) * y_pixels_per_mm;
-
-	glEnable(GL_SCISSOR_TEST);
-	glScissor(
-		x,
-		y,
-		width,
-		height	
-	);
-
-
-	/* Apply offsets that are adjusted by the scroll bars to the result. */
-	return nhgui_object_scroll_bar_scroll_result(
-			&window->scroll_bar,
-			result
-	);
-
-}
-
-struct nhgui_result 
-nhgui_window_end(
-		struct nhgui_window *window,
-		const struct nhgui_context *context,
-		const struct nhgui_render_attribute *attribute,
-		struct nhgui_input *input,
-		const struct nhgui_result result
-)
-{
-	
-	struct nhgui_result window_result = window->result_begin;
-
-	glDisable(GL_SCISSOR_TEST);
-
-	window_result.x_inc_next = attribute->width_mm;
-	window_result.y_inc_next = attribute->height_mm;
-
-	window_result.y_min_mm = result.y_min_mm < result.y_mm + result.y_inc_next ? result.y_min_mm : result.y_mm + result.y_inc_next;
-	window_result.x_max_mm = result.x_max_mm < result.x_mm + result.x_inc_next ? result.x_mm + result.x_inc_next : result.x_max_mm;
-
-	window_result.x_offset_mm = 0;
-	window_result.y_offset_mm = 0;
-
-	nhgui_object_scroll_bar(
-			&window->scroll_bar,
-			context,
-			&window->scroll_bar_attribute, 
-			attribute,
-			input,
-			window->result_begin,
-			result
-	);
-
-
-	return window_result;
-
-}
-			
 
 
 
@@ -1988,9 +1939,6 @@ nhgui_object_radio_button(
 	struct nhgui_result r = result;
 	r.y_inc_next = attribute->height_mm;
 	r.x_inc_next = attribute->height_mm;
-
-	r.y_min_mm = r.y_min_mm < r.y_mm - r.y_inc_next ? r.y_min_mm : r.y_mm - r.y_inc_next;
-	r.x_max_mm = r.x_max_mm < r.x_mm + r.x_inc_next ? r.x_mm + r.x_inc_next : r.x_max_mm;
 
 
 	return r;

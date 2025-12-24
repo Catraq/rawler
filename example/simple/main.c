@@ -6,7 +6,6 @@
 #include "math/vec.h"
 #include "nhgui_glfw.h"
 #include "nhgui.h"
-#include "nhgui_list.h"
 
 
 int main(int args, char *argv[])
@@ -126,8 +125,6 @@ int main(int args, char *argv[])
 		"I may not have hope and dreams."
 	};
 
-	struct nhgui_window nhwindow = {};
-
 
 	struct nhgui_render_attribute menu_render_attribute = {
 		.height_mm = 10,
@@ -182,28 +179,10 @@ int main(int args, char *argv[])
 
 		struct nhgui_result result = {
 			.y_mm = context.screen_height_mm * (float)input.height_pixel/(float)context.screen_resolution_y,
-			.y_min_mm = context.screen_height_mm * (float)input.height_pixel/(float)context.screen_resolution_y
 		};
 
-		struct nhgui_render_attribute window_attribute = 
-		{
-			.width_mm = context.screen_width_mm * (float)input.width_pixel/(float)context.screen_resolution_x,
-			.height_mm = context.screen_height_mm * (float)input.height_pixel/(float)context.screen_resolution_y
-		};
-
-
-		struct nhgui_result root_result = nhgui_window_begin(
-			&nhwindow,
-			&context,
-			&window_attribute,
-			&input,
-			result	
-		);
-
-	
 
 		/* Menu button */
-		result = nhgui_result_margin(result, 1, 1);
 		struct nhgui_result m_render_result = nhgui_icon_menu(
 				&menu_object,
 				&context,
@@ -328,16 +307,6 @@ int main(int args, char *argv[])
 
 
 	
-
-
-		nhgui_window_end(
-				&nhwindow,
-				&context,
-				&window_attribute,
-				&input,
-				result	
-		);
-
 
 		nhgui_glfw_frame_end(&frame, &input);	
 		glfwSwapBuffers(window);

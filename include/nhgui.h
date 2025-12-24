@@ -10,18 +10,19 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "misc/file.h"
 #include "math/vec.h"
 
 #include "nhgui_error.h"
 
 
 #define NHGUI_INPUT_MAX 32
-#define NGGUI_SHADER_FILE_MAX_SIZE 8192
 
 /* 
  * Attributes of the rendered object. Note that the attribute 
- * used depends. */
+ * that actually is used depends on the object. It might 
+ * be the case that the attribute is determined by the instance 
+ * of the object in question.
+ **/
 
 struct nhgui_render_attribute
 {
@@ -51,14 +52,9 @@ struct nhgui_result
 	float y_mm;
 	float x_mm;
 	
-	/* Next y and x values depending on operation */
+	/* Next increment of y and x values, is set by the operation */
 	float  y_inc_next;
 	float  x_inc_next;
-	
-	/* Maximum and min of of +x/y + inc */
-	float y_min_mm;
-	float x_max_mm;
-	
 };
 
 /* Input from the user.
@@ -100,8 +96,8 @@ struct nhgui_input
 	/* >  0 then next iteration will selected_new be 1.
 	 *
 	 * If a object is selected or pressed is this raised such 
-	 * that previous object can look for selected_new > 0 and 
-	 * become deselected 
+	 * that previous object can look for selected_new > 0 next
+	 * iteration and become deselected 
 	 * */
 	uint32_t selected_new_raise;
 	
@@ -113,7 +109,7 @@ struct nhgui_input
 };
 
 /* 
- * Opengl uniform locations 
+ * Opengl uniform locations in the shader
  */
 struct nhgui_common_uniform_locations
 {
@@ -276,6 +272,35 @@ struct nhgui_object_input_field_float
 };
 
 
+struct nhgui_object_text_list
+{
+	
+	/* Color of text and background of none selected */
+	struct nhgui_vec3 text_color;
+	struct nhgui_vec3 field_color;
+
+	/* Color of text and background of selected */
+	struct nhgui_vec3 selected_field_color;
+	struct nhgui_vec3 selected_text_color;
+	
+	/* > 0, then scroll the text if it overflows */
+	float char_scroll_per_sec;
+	
+	/* > 0 if anything is selected */
+	uint32_t selected;
+
+	/* Index of the selcted */
+	uint32_t selected_index;
+	
+	/* Used internaly */	
+	uint32_t selected_prev;
+
+	/* Result of the selected background */
+	struct nhgui_result selected_result;
+
+};
+
+
 
 struct nhgui_context
 {
@@ -388,37 +413,6 @@ struct nhgui_result
 nhgui_result_rewind_x_to(struct nhgui_result result, struct nhgui_result to);
 
 /* 
- * Apply the computed scrollbar values to the result. That is 
- * set the offsets.
- */
-struct nhgui_result
-nhgui_object_scroll_bar_scroll_result(
-		const struct nhgui_object_scroll_bar *bar,
-		const struct nhgui_result result
-);
-
-/* 
- * The scroll attribute describes the scrollbar with and height for y direction 
- * and the same btu rotated is used for x direction.
- *
- * size attribute describes the width and height of the window the scrollbar is 
- * applied to.
- *
- * scroll result describes the location of the window top left corner and 
- * result is the last result from an object.
- */
-void
-nhgui_object_scroll_bar(
-		struct nhgui_object_scroll_bar *bar,
-		const struct nhgui_context *context,
-		const struct nhgui_render_attribute *scroll_attribute,
-		const struct nhgui_render_attribute *size_attribute,
-		struct nhgui_input *input, 
-		const struct nhgui_result scroll_result,	
-		const struct nhgui_result result	
-);
-
-/* 
  * Attribute describes the window height and width 
  *
  * Is using glscissor such that it is only possiible to render to the 
@@ -444,6 +438,25 @@ nhgui_window_end(
 		struct nhgui_input *input,
 		const struct nhgui_result result
 );
+
+/*
+ * attribute height sets font height and width sets the width 
+ * of the list object. 
+ */
+struct nhgui_result
+nhgui_object_text_list(
+		struct nhgui_object_text_list *list,
+		const struct nhgui_context *context,
+		const char *entry[],
+		const uint32_t *entry_length,
+		const uint32_t entry_count,
+		const struct nhgui_object_font *font,
+		const struct nhgui_render_attribute *attribute,
+		struct nhgui_input *input, 
+		const struct nhgui_result result
+
+);
+
 
 /*
  * attribute sets the width of the  input field and height 
@@ -633,6 +646,37 @@ nhgui_object_radio_button(
 
 
 /* Internal functions */
+
+/* 
+ * Apply the computed scrollbar values to the result. That is 
+ * set the offsets.
+ */
+struct nhgui_result
+nhgui_object_scroll_bar_scroll_result(
+		const struct nhgui_object_scroll_bar *bar,
+		const struct nhgui_result result
+);
+
+/* 
+ * The scroll attribute describes the scrollbar with and height for y direction 
+ * and the same btu rotated is used for x direction.
+ *
+ * size attribute describes the width and height of the window the scrollbar is 
+ * applied to.
+ *
+ * scroll result describes the location of the window top left corner and 
+ * result is the last result from an object.
+ */
+void
+nhgui_object_scroll_bar(
+		struct nhgui_object_scroll_bar *bar,
+		const struct nhgui_context *context,
+		const struct nhgui_render_attribute *scroll_attribute,
+		const struct nhgui_render_attribute *size_attribute,
+		struct nhgui_input *input, 
+		const struct nhgui_result scroll_result,	
+		const struct nhgui_result result	
+);
 
 int32_t 
 nhgui_input_buffer(
