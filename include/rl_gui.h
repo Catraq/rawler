@@ -453,6 +453,7 @@ rl_gui_icon_blank_no_object(
 
 /* 
  * Draw quad but support input 
+ * Attribute describes width, height and color.
  */
 struct rl_gui_result 
 rl_gui_icon_blank(
@@ -550,7 +551,7 @@ rl_gui_object_font_text_delta_y_max(
 );
 
 /* 
- * Draw text with height described in attribute 
+ * Draw text with height and color as described in attribute.
  */
 struct rl_gui_result
 rl_gui_object_font_text(
