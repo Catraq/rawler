@@ -437,7 +437,7 @@ GLuint rl_gui_shader_vertex_create_from_memory(
 
 	if(program == 0)
 	{
-		fprintf(stderr, "Could not create shader program. \n");
+		fprintf(stderr, "rl_gui_shader_vertex_create(): failed. Could not create shader program. \n");
 		return 0;	
 	
 	}
@@ -770,7 +770,7 @@ rl_gui_icon_blank_initialize(struct rl_gui_icon_blank_instance *instance)
 
 	if(instance->program == 0)
 	{
-		fprintf(stderr, "rl_gui_shader_vertex_create_from_memory() failed. \n");
+		fprintf(stderr, "rl_gui_shader_vertex_create_from_memory(): failed. \n");
 		return -1;	
 	
 	}
@@ -779,7 +779,7 @@ rl_gui_icon_blank_initialize(struct rl_gui_icon_blank_instance *instance)
 	if(result < 0){
 		glDeleteProgram(instance->program);
 
-		fprintf(stderr, "rl_gui_common_uniform_locations_find() failed. \n");
+		fprintf(stderr, "rl_gui_common_uniform_locations_find(): failed. \n");
 		return -1;
 	}
 
@@ -882,14 +882,14 @@ rl_gui_icon_menu_initialize(struct rl_gui_icon_menu_instance *instance)
 
 	if(instance->program == 0)
 	{
-		fprintf(stderr, "rl_gui_shader_vertex_create_from_memory() failed. \n");
+		fprintf(stderr, "rl_gui_shader_vertex_create_from_memory(): failed. \n");
 		return -1;	
 	}
 	
 	int result = rl_gui_common_uniform_locations_find(&instance->locations, instance->program);
 	if(result < 0)
 	{
-		fprintf(stderr, "rl_gui_common_uniform_locations_find() failed. \n");
+		fprintf(stderr, "rl_gui_common_uniform_locations_find(): failed. \n");
 		glDeleteProgram(instance->program);
 		return -1;
 	}
@@ -974,7 +974,7 @@ rl_gui_icon_text_cursor_initialize(struct rl_gui_icon_text_cursor_instance *inst
 
 	if(instance->program == 0)
 	{
-		fprintf(stderr, "rl_gui_shader_vertex_create_from_file() failed. \n");
+		fprintf(stderr, "rl_gui_shader_vertex_create_from_file(): failed. \n");
 		return -1;	
 	}
 	
@@ -986,7 +986,7 @@ rl_gui_icon_text_cursor_initialize(struct rl_gui_icon_text_cursor_instance *inst
 	if(result < 0){
 		glDeleteProgram(instance->program);
 
-		fprintf(stderr, "rl_gui_common_uniform_locations_find() failed. \n");
+		fprintf(stderr, "rl_gui_common_uniform_locations_find(): failed. \n");
 		return -1;
 	}
 
@@ -1274,7 +1274,6 @@ rl_gui_object_input_field_float(
 	/* If selected previously, then update the float value */	
 	else if(field->blank_object.deselected > 0)
 	{
-		printf("Updated value \n");
 		*value = atof(float_field->str);
 	}
 	else
@@ -1524,7 +1523,7 @@ rl_gui_object_font_freetype_characters_initialize(
 	FT_Library ft;
 	if(FT_Init_FreeType(&ft) != 0)
 	{
-		fprintf(stderr, "FT_Init_Freetype() failed. \n");
+		fprintf(stderr, "FT_Init_Freetype(): failed. \n");
 		return -1;	
 	}
 
@@ -1532,7 +1531,7 @@ rl_gui_object_font_freetype_characters_initialize(
 	FT_Face face;
 	if(FT_New_Face(ft, filename, 0, &face))
 	{
-		fprintf(stderr, "FT_New_Face() failed. \n");
+		fprintf(stderr, "FT_New_Face(): failed. \n");
 		FT_Done_FreeType(ft);
 		return -1;
 	}
@@ -1552,7 +1551,7 @@ rl_gui_object_font_freetype_characters_initialize(
 	for(uint32_t i = 0; i < 128; i++)
 	{
 		if(FT_Load_Char(face, i, FT_LOAD_RENDER)){
-			fprintf(stderr, "Could not load characters %c from font file. \n", i);
+			fprintf(stderr, "FT_Load_Char(): failed. Could not load characters %c from font file. \n", i);
 			glDeleteTextures(128, texture);
 			FT_Done_FreeType(ft);
 			return -1;	
@@ -1643,7 +1642,7 @@ rl_gui_object_font_text_initialize(struct rl_gui_object_font_text_instance *inst
 	
 	if(instance->program == 0)
 	{
-		fprintf(stderr, "rl_gui_shader_vertex_create_from_file() failed. \n");
+		fprintf(stderr, "rl_gui_shader_vertex_create_from_file(): failed. \n");
 		return -1;	
 	}
 	
@@ -1655,7 +1654,7 @@ rl_gui_object_font_text_initialize(struct rl_gui_object_font_text_instance *inst
 	if(result < 0){
 		glDeleteProgram(instance->program);
 		
-		fprintf(stderr, "rl_gui_common_uniform_locations_find() failed. \n");
+		fprintf(stderr, "rl_gui_common_uniform_locations_find(): failed. \n");
 		return -1;
 	}
 
@@ -1995,7 +1994,7 @@ int rl_gui_object_radio_button_initialize(struct rl_gui_object_radio_button_inst
 
 	if(program == 0)
 	{
-		fprintf(stderr, "rl_gui_shader_vertex_create_from_memory() failed. \n");
+		fprintf(stderr, "rl_gui_shader_vertex_create_from_memory(): failed. \n");
 		return -1;	
 	
 	}
@@ -2009,7 +2008,7 @@ int rl_gui_object_radio_button_initialize(struct rl_gui_object_radio_button_inst
 	if(result < 0){
 		glDeleteProgram(instance->shader_program);
 
-		fprintf(stderr, "rl_gui_common_uniform_locations_find() failed. \n");
+		fprintf(stderr, "rl_gui_common_uniform_locations_find(): failed. \n");
 		return -1;
 	}
 
@@ -2017,7 +2016,7 @@ int rl_gui_object_radio_button_initialize(struct rl_gui_object_radio_button_inst
 	GLint checked_location = glGetUniformLocation(program, checked_str);
 	if(checked_location == -1){
 		glDeleteProgram(instance->shader_program);
-		fprintf(stderr, "Could not find checked uniform location. \n");
+		fprintf(stderr, "glGetUniformLocation(): failed. Could not find uniform location %s. \n", checked_str);
 		return -1;
 	}
 	instance->location_checked = checked_location;
