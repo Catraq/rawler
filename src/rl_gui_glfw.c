@@ -118,6 +118,14 @@ rl_gui_glfw_frame_begin(struct rl_gui_glfw_frame *frame, GLFWwindow *window)
 	frame->key_arrow_right_clicked_last =  arrow_right; 
 
 
+	int width_mm, height_mm;
+	glfwGetMonitorPhysicalSize(glfwGetPrimaryMonitor(), &width_mm, &height_mm);
+
+	int res_x, res_y;
+	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	res_x = mode->width;
+	res_y = mode->height;
+
 
 
 	/* Get screen pixel size */
@@ -138,6 +146,10 @@ rl_gui_glfw_frame_begin(struct rl_gui_glfw_frame *frame, GLFWwindow *window)
 	struct rl_gui_input input = {
 		.width_pixel = width,
 		.height_pixel = height,
+		.screen_width_mm = width_mm,
+		.screen_height_mm = height_mm,
+		.screen_resolution_x = res_x,
+		.screen_resolution_y = res_y,
 		.cursor_x_pixel = (uint32_t)x_cursor,
 		.cursor_y_pixel = height - (uint32_t)y_cursor,
 		.cursor_x_delta_pixel = x_cursor - frame->prev_cursor_x,

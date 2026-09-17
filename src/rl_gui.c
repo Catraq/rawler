@@ -163,18 +163,11 @@ static uint32_t utf8_offset_to_count(const char *str, uint32_t offset)
 }
 
 int rl_gui_context_initialize(
-		struct rl_gui_context *context,
-	       	uint32_t screen_resolution_x, uint32_t screen_resolution_y,
-	       	uint32_t width_mm, uint32_t height_mm
+		struct rl_gui_context *context
 )
 {
 	int result = 0;
 
-	context->screen_width_mm = width_mm;
-	context->screen_height_mm = height_mm;
-	context->screen_resolution_x = screen_resolution_x;
-	context->screen_resolution_y = screen_resolution_y;
-	
 	if(FT_Init_FreeType(&context->ft) != 0)
 	{
 		fprintf(stderr, "FT_Init_Freetype() failed. \n");
@@ -304,12 +297,12 @@ rl_gui_common_uniform_locations_set(
 	       	const float b)
 {
 	/* Scale by window relative resolution and calcuate mm per 1.0 unit mul with actual height and width */	
-	float s_x = (float)context->screen_resolution_x/(float)input->width_pixel * 1.0 /(float)context->screen_width_mm * width_mm;
-	float s_y = (float)context->screen_resolution_y/(float)input->height_pixel * 1.0 /(float)context->screen_height_mm * height_mm;
+	float s_x = (float)input->screen_resolution_x/(float)input->width_pixel * 1.0 /(float)input->screen_width_mm * width_mm;
+	float s_y = (float)input->screen_resolution_y/(float)input->height_pixel * 1.0 /(float)input->screen_height_mm * height_mm;
 
 	/* Negative as we grow down. */	
-	float p_y = (float)context->screen_resolution_y/(float)input->height_pixel * 1.0/(float)context->screen_height_mm * (result.y_mm + result.y_offset_mm);
-	float p_x = (float)context->screen_resolution_x/(float)input->width_pixel * 1.0/(float)context->screen_width_mm * (result.x_mm + result.x_offset_mm);
+	float p_y = (float)input->screen_resolution_y/(float)input->height_pixel * 1.0/(float)input->screen_height_mm * (result.y_mm + result.y_offset_mm);
+	float p_x = (float)input->screen_resolution_x/(float)input->width_pixel * 1.0/(float)input->screen_width_mm * (result.x_mm + result.x_offset_mm);
 	
 	/* Convert to gl cordinates [-1, 1] and move down with size otherwise the element will be above the screen */ 
 	p_y = 2.0*p_y-1.0;
@@ -341,7 +334,7 @@ rl_gui_result_begin(
 		)
 {
 	struct rl_gui_result result = {
-		.y_mm = context->screen_height_mm * (float)input->height_pixel/(float)context->screen_resolution_y,
+		.y_mm = input->screen_height_mm * (float)input->height_pixel/(float)input->screen_resolution_y,
 	};
 	return result;
 }
@@ -411,8 +404,8 @@ rl_gui_object_text_list(
 )
 {
 
-	float cursor_x_mm = (float)input->width_pixel / (float)context->screen_resolution_x * (float)context->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
-	float cursor_y_mm = (float)input->height_pixel / (float)context->screen_resolution_y * (float)context->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
+	float cursor_x_mm = (float)input->width_pixel / (float)input->screen_resolution_x * (float)input->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
+	float cursor_y_mm = (float)input->height_pixel / (float)input->screen_resolution_y * (float)input->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
 
 
 	struct rl_gui_result r = result;	
@@ -465,7 +458,7 @@ rl_gui_object_text_list(
 			uint32_t overflow_count_index = 0;
 			uint32_t overflow_count = rl_gui_object_font_text_overflow_count(
 				r,	
-				context,
+				input,
 				font,
 				entry[i],
 				entry_length[i]
@@ -523,7 +516,7 @@ rl_gui_object_text_list(
 			uint32_t overflow_count_index = 0;
 			uint32_t overflow_count = rl_gui_object_font_text_overflow_count(
 				r,	
-				context,
+				input,
 				font,
 				entry[i],
 				entry_length[i]
@@ -812,8 +805,8 @@ rl_gui_icon_blank(
 {
 	const struct rl_gui_icon_blank_instance *instance = &context->blank;
 
-	float cursor_x_mm = (float)input->width_pixel / (float)context->screen_resolution_x * (float)context->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
-	float cursor_y_mm = (float)input->height_pixel / (float)context->screen_resolution_y * (float)context->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
+	float cursor_x_mm = (float)input->width_pixel / (float)input->screen_resolution_x * (float)input->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
+	float cursor_y_mm = (float)input->height_pixel / (float)input->screen_resolution_y * (float)input->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
 	
 	struct rl_gui_result result_tmp = result;
 	result_tmp.y_mm -= attribute->height_mm;
@@ -958,8 +951,8 @@ rl_gui_icon_menu(
 
 	const struct rl_gui_icon_menu_instance *instance = &context->menu;
 
-	float cursor_x_mm = (float)input->width_pixel / (float)context->screen_resolution_x * (float)context->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
-	float cursor_y_mm = (float)input->height_pixel / (float)context->screen_resolution_y * (float)context->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
+	float cursor_x_mm = (float)input->width_pixel / (float)input->screen_resolution_x * (float)input->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
+	float cursor_y_mm = (float)input->height_pixel / (float)input->screen_resolution_y * (float)input->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
 	
 	struct rl_gui_result result_tmp = result;
 	result_tmp.y_mm -= attribute->height_mm;
@@ -1148,7 +1141,7 @@ rl_gui_icon_text_cursor_deinitialize(struct rl_gui_icon_text_cursor_instance *in
 uint32_t 
 rl_gui_object_font_text_overflow_count(
 		const struct rl_gui_result within, 
-		const struct rl_gui_context *context,
+		const struct rl_gui_input *input,
 		const struct rl_gui_object_font *font,
 		const char *text,
 		const uint32_t text_length
@@ -1184,7 +1177,7 @@ rl_gui_object_font_text_overflow_count(
 			continue;
 		}
 
-		float mm_per_pixel_x = (float)context->screen_width_mm/(float)context->screen_resolution_x;
+		float mm_per_pixel_x = (float)input->screen_width_mm/(float)input->screen_resolution_x;
 		
 		float new_x_mm = x_mm + (float)(font->face->glyph->advance.x >> 6) * mm_per_pixel_x;
 		/* See if it is past the boudning box */
@@ -1263,7 +1256,7 @@ rl_gui_object_input_field(
 
 	uint32_t overflow_count = rl_gui_object_font_text_overflow_count(
 		background_result,
-		context,
+		input,
 		font,
 		input_buffer,
 		*input_buffer_length
@@ -1296,8 +1289,8 @@ rl_gui_object_input_field(
 	struct rl_gui_result cursor_result = background_result ;
 	if(field->blank_object.clicked > 0)
 	{
-		float cursor_x_mm = (float)input->width_pixel / (float)context->screen_resolution_x * (float)context->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
-		float cursor_y_mm = (float)input->height_pixel / (float)context->screen_resolution_y * (float)context->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
+		float cursor_x_mm = (float)input->width_pixel / (float)input->screen_resolution_x * (float)input->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
+		float cursor_y_mm = (float)input->height_pixel / (float)input->screen_resolution_y * (float)input->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
 		
 		uint32_t index_found = 0;
 		uint32_t i = 0;
@@ -1316,7 +1309,7 @@ rl_gui_object_input_field(
 				continue;
 			}
 
-			float mm_per_pixel_x = (float)context->screen_width_mm/(float)context->screen_resolution_x;
+			float mm_per_pixel_x = (float)input->screen_width_mm/(float)input->screen_resolution_x;
 			float x_mm_inc = (font->face->glyph->advance.x >> 6) * mm_per_pixel_x;
 			if(cursor_x_mm > cursor_result.x_mm && cursor_x_mm < cursor_result.x_mm + x_mm_inc
 			&& cursor_y_mm > cursor_result.y_mm - attribute->height_mm && cursor_y_mm < cursor_result.y_mm)
@@ -1354,7 +1347,7 @@ rl_gui_object_input_field(
 				continue;
 			}
 
-			float mm_per_pixel_x = (float)context->screen_width_mm/(float)context->screen_resolution_x;
+			float mm_per_pixel_x = (float)input->screen_width_mm/(float)input->screen_resolution_x;
 			float x_mm_inc = (font->face->glyph->advance.x >> 6) * mm_per_pixel_x;
 
 			overflow_offset_iter += c_inc;	
@@ -1391,7 +1384,7 @@ rl_gui_object_input_field(
 			else
 			{
 
-				float mm_per_pixel_x = (float)context->screen_width_mm/(float)context->screen_resolution_x;
+				float mm_per_pixel_x = (float)input->screen_width_mm/(float)input->screen_resolution_x;
 				float cursor_width_mm = (font->face->glyph->advance.x >> 6) * mm_per_pixel_x;
 				cursor_attribute.width_mm = cursor_width_mm;
 			}
@@ -1532,7 +1525,7 @@ rl_gui_object_font_text_initialize(struct rl_gui_object_font_text_instance *inst
 struct rl_gui_result
 rl_gui_object_font_text_result_centered_by_previous_x(
 		const struct rl_gui_result result,
-		const struct rl_gui_context *context, 
+		const struct rl_gui_input *input,
 		const struct rl_gui_object_font *font,
 		const struct rl_gui_render_attribute *attribute,
 		const char *text,
@@ -1560,7 +1553,7 @@ rl_gui_object_font_text_result_centered_by_previous_x(
 			continue;
 		}
 
-		float mm_per_pixel_x = (float)context->screen_width_mm/(float)context->screen_resolution_x;
+		float mm_per_pixel_x = (float)input->screen_width_mm/(float)input->screen_resolution_x;
 		last = (font->face->glyph->advance.x >> 6) * mm_per_pixel_x;
 		x_mm += last;
 	}
@@ -1572,7 +1565,7 @@ rl_gui_object_font_text_result_centered_by_previous_x(
 
 static float
 rl_gui_object_font_text_delta_y(
-		const struct rl_gui_context *context,
+		const struct rl_gui_input *input,
 		const struct rl_gui_object_font *font,
 		const struct rl_gui_render_attribute *attribute,
 		const char *text, 
@@ -1595,7 +1588,7 @@ rl_gui_object_font_text_delta_y(
 		}
 
 
-		float mm_per_pixel_y = (float)context->screen_height_mm/(float)context->screen_resolution_y;
+		float mm_per_pixel_y = (float)input->screen_height_mm/(float)input->screen_resolution_y;
 		float delta = font->face->glyph->bitmap.rows * mm_per_pixel_y;
 		delta_max = delta_max < delta ? delta : delta_max;
 	}
@@ -1622,7 +1615,7 @@ rl_gui_object_font_text(
 	const struct rl_gui_object_font_text_instance *instance = &context->font;
 	const char delta_y_max_str[] = "jl"; 
 	float delta_y_max_mm =rl_gui_object_font_text_delta_y(
-		context,
+		input,
 		font,
 		attribute,
 		delta_y_max_str, 
@@ -1638,11 +1631,11 @@ rl_gui_object_font_text(
 	GLuint font_texture;
 	glGenTextures(1, &font_texture);
 	
-	uint32_t pixels_per_mm = context->screen_resolution_y/context->screen_height_mm;
+	uint32_t pixels_per_mm = input->screen_resolution_y/input->screen_height_mm;
 	FT_Set_Pixel_Sizes(font->face, 0, attribute->height_mm * pixels_per_mm);
 
-	float mm_per_pixel_x = (float)context->screen_width_mm/(float)context->screen_resolution_x;
-	float mm_per_pixel_y = (float)context->screen_height_mm/(float)context->screen_resolution_y;
+	float mm_per_pixel_x = (float)input->screen_width_mm/(float)input->screen_resolution_x;
+	float mm_per_pixel_y = (float)input->screen_height_mm/(float)input->screen_resolution_y;
 	
 	uint32_t str_index = 0;
 	while(str_index  < text_length)
@@ -1765,7 +1758,7 @@ rl_gui_object_font_text_area(
 				continue;
 			}
 
-			float mm_per_pixel_x = (float)context->screen_width_mm/(float)context->screen_resolution_x;
+			float mm_per_pixel_x = (float)input->screen_width_mm/(float)input->screen_resolution_x;
 			
 			float new_x_mm = x_mm + (float)(font->face->glyph->advance.x >> 6) * mm_per_pixel_x;
 			
@@ -1834,8 +1827,8 @@ rl_gui_object_radio_button(
 	 * then calculate pixels per mm  and mutiply by cursor position.
 	 * */
 
-	float cursor_x_mm = (float)input->width_pixel / (float)context->screen_resolution_x * (float)context->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
-	float cursor_y_mm = (float)input->height_pixel / (float)context->screen_resolution_y * (float)context->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
+	float cursor_x_mm = (float)input->width_pixel / (float)input->screen_resolution_x * (float)input->screen_width_mm/(float)input->width_pixel * (float)input->cursor_x_pixel;
+	float cursor_y_mm = (float)input->height_pixel / (float)input->screen_resolution_y * (float)input->screen_height_mm/(float)input->height_pixel * (float)input->cursor_y_pixel;
 
 	struct rl_gui_result result_tmp = result;
 	result_tmp.y_mm -= attribute->height_mm;

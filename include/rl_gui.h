@@ -72,6 +72,14 @@ struct rl_gui_input
 	uint32_t width_pixel;
 	uint32_t height_pixel;
 
+	/* Screen width and height in mm. */
+	uint32_t screen_width_mm;
+	uint32_t screen_height_mm;
+	
+	/* Screen resolution */
+	uint32_t screen_resolution_x;
+	uint32_t screen_resolution_y;
+
 	/* Cursor location with 0,0 in lower left */
 	float cursor_x_pixel;
 	float cursor_y_pixel;
@@ -300,13 +308,6 @@ struct rl_gui_context
 
 	struct rl_gui_icon_menu_instance menu;
 
-	/* Screen width and height in mm. */
-	uint32_t screen_width_mm;
-	uint32_t screen_height_mm;
-	
-	/* Screen resolution */
-	uint32_t screen_resolution_x;
-	uint32_t screen_resolution_y;
 };
 
 struct rl_gui_object_font_text_area 
@@ -325,9 +326,7 @@ struct rl_gui_object_font_text_area
 
 
 int rl_gui_context_initialize(
-		struct rl_gui_context *context,
-	       	uint32_t screen_resolution_x, uint32_t screen_resolution_y,
-	       	uint32_t screen_width_mm, uint32_t screen_height_mm
+		struct rl_gui_context *context
 );
 
 void rl_gui_context_deinitialize(
@@ -501,7 +500,7 @@ rl_gui_object_font_freetype_characters_deinitialize(
 struct rl_gui_result
 rl_gui_object_font_text_result_centered_by_previous_x(
 		const struct rl_gui_result result,
-		const struct rl_gui_context *context, 
+		const struct rl_gui_input *input,
 		const struct rl_gui_object_font *font,
 		const struct rl_gui_render_attribute *attribute,
 		const char *text,
@@ -516,7 +515,7 @@ rl_gui_object_font_text_result_centered_by_previous_x(
 uint32_t 
 rl_gui_object_font_text_overflow_count(
 		const struct rl_gui_result within, 
-		const struct rl_gui_context *context,
+		const struct rl_gui_input *input,
 		const struct rl_gui_object_font *font,
 		const char *text,
 		const uint32_t text_length

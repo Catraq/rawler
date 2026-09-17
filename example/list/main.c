@@ -108,7 +108,7 @@ input_list_example(
 
 	struct rl_gui_result icon_blank_center = rl_gui_object_font_text_result_centered_by_previous_x(
 			res, 
-			context,
+			input,
 			font,
 			&radio_render_attribute,
 			add_text,
@@ -197,7 +197,7 @@ input_list_example(
 
 			struct rl_gui_result icon_blank_delete_center = rl_gui_object_font_text_result_centered_by_previous_x(
 					res, 
-					context,
+					input,
 					font,
 					&radio_render_attribute,
 					delete_text,
@@ -291,14 +291,6 @@ int main(int args, char *argv[])
 	
 	glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 
-	int width_mm, height_mm;
-	glfwGetMonitorPhysicalSize(glfwGetPrimaryMonitor(), &width_mm, &height_mm);
-
-	int res_x, res_y;
-	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	res_x = mode->width;
-	res_y = mode->height;
-
 
 
 	glfwMakeContextCurrent(window);
@@ -331,7 +323,7 @@ int main(int args, char *argv[])
 	int result = 0;
 	/* Create gui context */	
 	struct rl_gui_context context;
-	result = rl_gui_context_initialize(&context, (uint32_t)res_x, (uint32_t)res_y, (uint32_t)width_mm, (uint32_t)height_mm);
+	result = rl_gui_context_initialize(&context);
 	if(result < 0){
 		fprintf(stderr, "rl_gui_context_initialize() failed. \n");
 		exit(EXIT_FAILURE);
