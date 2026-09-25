@@ -125,7 +125,9 @@ int main(int args, char *argv[])
 	const uint32_t input_buffer_size = 32;
 	uint32_t input_buffer_length = 0;
 	char input_buffer[input_buffer_size];
-	struct rl_gui_object_input_field input_field = {};
+	struct rl_gui_object_input_field input_field = {
+		.font_color = (struct rl_gui_vec3){.x = 1.0, .y = 0.0, .z = 0.0f}	
+	};
 
 	/* Add input field */
 	const uint32_t add_buffer_size = 32;

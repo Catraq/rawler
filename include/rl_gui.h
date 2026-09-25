@@ -235,26 +235,11 @@ struct rl_gui_object_input_field
 
 	/* background color of the field */
 	struct rl_gui_vec3 field_color;
+
+	struct rl_gui_vec3 font_color;
 	
 	/* Used for input */	
 	struct rl_gui_icon_blank blank_object;	
-};
-
-struct rl_gui_object_input_field_float 
-{
-	/* Float number represented as string */
-	char str[32];
-	
-	/* Length of str number */
-	uint32_t str_length;
-	
-	/* > 0 if str have been initialized with the float value passed 
-	 * by the function 
-	 */
-	uint32_t str_initialized;
-
-	struct rl_gui_object_input_field field;
-	
 };
 
 
@@ -408,20 +393,6 @@ rl_gui_object_input_field(
 		const uint32_t input_buffer_size
 );
 
-/*
- * attribute sets the width of the  input field and height 
- * sets the font height. 
- */
-struct rl_gui_result 
-rl_gui_object_input_field_float(
-		struct rl_gui_object_input_field_float *float_field,
-		const struct rl_gui_context *context,
-		const struct rl_gui_object_font *font,
-		const struct rl_gui_render_attribute *attribute,
-		struct rl_gui_input *input, 
-		const struct rl_gui_result result,
-		float *value
-);
 
 
 /* 

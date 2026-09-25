@@ -39,6 +39,7 @@ input_list_example_initialize(
 {
 	example->add_field = (struct rl_gui_object_input_field){
 		.field_color = {.x = 0.3, .y = 0.3, .z = 0.3},
+		.font_color = {.x = 1.0, .y = 0.0, .z = 0.3}
 	};
 
 	example->list_object = (struct rl_gui_object_text_list){

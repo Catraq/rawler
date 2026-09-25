@@ -1412,9 +1412,9 @@ rl_gui_object_input_field(
 	struct rl_gui_render_attribute font_attribute = 
 	{
 		.height_mm = attribute->height_mm,
-		.r = 1.0f,	
-		.g = 1.0f, 
-		.b = 1.0f
+		.r = field->font_color.x, 
+		.g = field->font_color.y, 
+		.b = field->font_color.z 
 	};
 
 
