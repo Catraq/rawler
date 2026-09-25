@@ -168,7 +168,7 @@ int main(int args, char *argv[])
 		glEnable(GL_SCISSOR_TEST);
 
 
-		struct rl_gui_result result =  rl_gui_result_begin(&input, &context);
+		struct rl_gui_result result =  rl_gui_result_begin(&input);
 
 		/* Menu button */
 		struct rl_gui_result m_render_result = rl_gui_icon_menu(

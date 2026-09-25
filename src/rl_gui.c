@@ -329,8 +329,7 @@ rl_gui_common_uniform_locations_set(
 
 struct rl_gui_result 
 rl_gui_result_begin(
-		struct rl_gui_input *input,
-		struct rl_gui_context *context
+		struct rl_gui_input *input
 		)
 {
 	struct rl_gui_result result = {

@@ -380,7 +380,7 @@ int main(int args, char *argv[])
 	
 
 
-		struct rl_gui_result result =  rl_gui_result_begin(&input, &context);
+		struct rl_gui_result result =  rl_gui_result_begin(&input);
 		
 	       	input_list_example(
 			&example_1,
